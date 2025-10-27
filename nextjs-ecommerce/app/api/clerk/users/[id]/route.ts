@@ -1,22 +1,32 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { clerkClient } from "@clerk/nextjs";
+import { getCurrentUser } from "@/lib/get-current-user";
+import { db } from "@/lib/db";
+
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { userId } = auth();
+  const currentUser = await getCurrentUser();
 
   try {
-    if (!userId) {
+    if (!currentUser || currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized", status: 401 });
     }
 
-    const user = await clerkClient.users.deleteUser(id);
+    // Prevent deleting yourself
+    if (currentUser.id === id) {
+      return NextResponse.json({ error: "Cannot delete your own account", status: 400 });
+    }
+
+    const user = await db.user.delete({
+      where: { id },
+    });
+
     return NextResponse.json({ user });
   } catch (error) {
-    return NextResponse.json({ error: "Error deleting task", status: 500 });
+    console.error("Error deleting user:", error);
+    return NextResponse.json({ error: "Error deleting user", status: 500 });
   }
 }
 
@@ -25,20 +35,29 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { isAdmin } = await req.json();
-
-  const admin = isAdmin === "Admin" ? true : false;
+  const currentUser = await getCurrentUser();
 
   try {
-    const user: any = await clerkClient.users.getUser(id);
-
-    if (user) {
-      await clerkClient.users.updateUser(id, {
-        unsafeMetadata: {
-          isAdmin: admin,
-        },
-      });
+    if (!currentUser || currentUser.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized", status: 401 });
     }
+
+    const { isAdmin } = await req.json();
+    const role = isAdmin === "Admin" ? "ADMIN" : "USER";
+
+    const user = await db.user.update({
+      where: { id },
+      data: { role },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Error updating user:", error);
@@ -54,18 +73,32 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { userId } = auth();
+  const currentUser = await getCurrentUser();
 
   try {
-    if (!userId) {
+    if (!currentUser || currentUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized", status: 401 });
     }
 
-    const user: any = await clerkClient.users.getUser(id);
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found", status: 404 });
+    }
 
     return NextResponse.json({ user });
   } catch (error) {
-    console.error("Error getting users:", error);
+    console.error("Error getting user:", error);
     return NextResponse.json({
       success: false,
       error: "Internal Server Error",

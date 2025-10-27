@@ -1,11 +1,12 @@
 import ProductCard from "@/components/ui/product-card";
+import PopularByCountry from "@/components/popular-by-country";
 import { getAllProducts } from "@/lib/apiCalls";
 import filteredData from "@/app/utils/filteredData";
 import { Product } from "@/types";
 
 export const metadata = {
-  title: "Shop | Kemal Store",
-  description: `Shop for e-ecommerce, selling products, and new productivity`,
+  title: "Shop | eSIM Store",
+  description: `Shop for eSIM and SIM cards, international travel connectivity`,
 };
 
 const ShopPage = async ({
@@ -48,11 +49,24 @@ const ShopPage = async ({
 
   return (
     <>
+      {/* Popular by Country Section */}
+      <div className="mb-12">
+        <PopularByCountry />
+      </div>
+
+      {/* Search Results */}
       {searchMsg ? searchMsg : ""}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {(filtered || data)?.map((product: any) => (
-          <ProductCard key={product.id} data={product} />
-        ))}
+      
+      {/* All Products Grid */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          Tất cả sản phẩm eSIM/SIM
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {(filtered || data)?.map((product: any) => (
+            <ProductCard key={product.id} data={product} />
+          ))}
+        </div>
       </div>
     </>
   );

@@ -38,18 +38,20 @@ const NewUser = () => {
   });
 
   const { data } = useQuery({
-    queryKey: ["getUser"],
+    queryKey: ["getUser", categoryId],
     queryFn: async () => {
+      if (!categoryId) return null;
       const { data } = await axios.get(`/api/clerk/users/${categoryId}`);
       const mergedData = {
-        email: data.user.emailAddresses[0].emailAddress,
-        isAdmin: data.user.unsafeMetadata.isAdmin ? "Admin" : "User",
+        email: data.user.email,
+        isAdmin: data.user.role === "ADMIN" ? "Admin" : "User",
         password: "",
-        userName: data.user.username ? data.user.username : data.user.firstName,
+        userName: data.user.name,
       };
       setFormData(mergedData);
       return data;
     },
+    enabled: !!categoryId,
   });
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {

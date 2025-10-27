@@ -40,8 +40,13 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const category = await db.category.findMany();
-    return NextResponse.json(category);
+    return NextResponse.json(category, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    });
   } catch (error) {
+    console.error("Error getting categories:", error);
     return NextResponse.json({ error: "Error getting category.", status: 500 });
   }
 }

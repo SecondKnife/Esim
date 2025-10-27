@@ -23,7 +23,7 @@ const SidebarItems = ({ category }: any) => {
         <option value="/shop">All</option>
         {category?.map((category: any) => (
           <option key={category.id} value={`/shop/${category.category}`}>
-            {category.category[0].toUpperCase() + category.category.slice(1)}
+            {category.billboard || category.category[0].toUpperCase() + category.category.slice(1)}
           </option>
         ))}
       </select>
@@ -44,7 +44,7 @@ const SidebarItems = ({ category }: any) => {
                 pathName === "/shop/" + category.category ? "underline" : ""
               }`}
             >
-              {category.category[0].toUpperCase() + category.category.slice(1)}
+              {category.billboard || category.category[0].toUpperCase() + category.category.slice(1)}
             </p>
           </Link>
         ))}

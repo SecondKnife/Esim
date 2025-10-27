@@ -1,12 +1,26 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const NavItem = () => {
   const pathname = usePathname();
-  const user = useUser();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const response = await axios.get("/api/auth/me");
+        if (response.data.user && response.data.user.role === "ADMIN") {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   const routes = [
     {
@@ -26,8 +40,6 @@ const NavItem = () => {
       href: "/admin",
     },
   ];
-
-  const isAdmin = user.user && user.user.unsafeMetadata.isAdmin;
 
   return (
     <div className="flex items-center gap-2 mx-2 max-md:flex-col max-md:items-start max-md:mt-3">

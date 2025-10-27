@@ -1,5 +1,5 @@
 import { type Metadata } from "next";
-import ProductItem from "./_components/product-item";
+import ProductDetailPage from "./_components/product-detail";
 import { getProduct } from "@/lib/apiCalls";
 import Footer from "@/components/footer";
 import { siteConfig } from "@/config/site";
@@ -13,8 +13,8 @@ export async function generateMetadata({
 
   if (!getProducts)
     return {
-      title: "Kemal Store",
-      description: "E-ecommerce, selling products, and new productivity",
+      title: "eSIM Store",
+      description: "eSIM and SIM cards for international travel",
     };
 
   return {
@@ -26,7 +26,7 @@ export async function generateMetadata({
 const ProductPage = ({ params }: { params: { productId: string } }) => {
   return (
     <div>
-      <ProductItem />
+      <ProductDetailPage />
       <Footer />
     </div>
   );

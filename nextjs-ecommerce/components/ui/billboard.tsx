@@ -1,8 +1,9 @@
 "use client";
 
+import { R2_IMAGES } from "@/lib/r2-urls";
+
 const Billboard = () => {
-  const baseUrl =
-    "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/bg3.png";
+  const baseUrl = R2_IMAGES.BANNER_MAIN;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 rounded-xl overflow-hidden">

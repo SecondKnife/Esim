@@ -1,18 +1,22 @@
 import Navbar from "../_components/Navbar";
 import Sidebar from "../_components/Sidebar";
 import { redirect } from "next/navigation";
-import { currentUser } from "@clerk/nextjs";
+import { getCurrentUser } from "@/lib/get-current-user";
 
 export const metadata = {
-  title: "Admin | Kemal Store",
-  description: `Admin for e-ecommerce, selling products, and new productivity`,
+  title: "Admin | eSIM Store",
+  description: `Admin panel for eSIM Store management`,
 };
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await currentUser();
+  const user = await getCurrentUser();
 
-  if (!user || !user.unsafeMetadata.isAdmin) {
-    redirect("/sign-in");
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (user.role !== "ADMIN") {
+    redirect("/");
   }
 
   return (

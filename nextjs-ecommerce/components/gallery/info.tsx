@@ -57,6 +57,45 @@ const Info: React.FC<InfoProps> = ({ data, categories, availableSizes }) => {
           {data?.description}
         </span>
       </div>
+      
+      {/* eSIM/SIM Specific Information */}
+      {(data.country || data.region || data.dataPlan || data.validityDays || data.simType) && (
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3">Thông tin chi tiết</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {data.country && (
+              <div>
+                <span className="text-sm text-gray-600">Quốc gia:</span>
+                <p className="font-medium">{data.country}</p>
+              </div>
+            )}
+            {data.region && (
+              <div>
+                <span className="text-sm text-gray-600">Khu vực:</span>
+                <p className="font-medium">{data.region}</p>
+              </div>
+            )}
+            {data.dataPlan && (
+              <div>
+                <span className="text-sm text-gray-600">Dung lượng:</span>
+                <p className="font-medium">{data.dataPlan}</p>
+              </div>
+            )}
+            {data.validityDays && (
+              <div>
+                <span className="text-sm text-gray-600">Thời hạn:</span>
+                <p className="font-medium">{data.validityDays} ngày</p>
+              </div>
+            )}
+            {data.simType && (
+              <div>
+                <span className="text-sm text-gray-600">Loại SIM:</span>
+                <p className="font-medium">{data.simType}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="flex mt-2 flex-wrap gap-2 flex-col">
         <span className="text-xl font-semibold py-2 text-gray-900">Size</span>
         <div className="flex flex-wrap gap-2">

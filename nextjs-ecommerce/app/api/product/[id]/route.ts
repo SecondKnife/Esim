@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { s3Client } from "@/lib/s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { auth } from "@clerk/nextjs";
+import { getCurrentUser } from "@/lib/get-current-user";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
@@ -9,9 +9,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { userId } = auth();
+  const user = await getCurrentUser();
   try {
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized", status: 401 });
     }
     const productSizes = await db.productSize.findMany({

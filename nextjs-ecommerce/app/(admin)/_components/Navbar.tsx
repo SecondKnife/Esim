@@ -2,10 +2,15 @@ import Logo from "@/components/Logo";
 import React from "react";
 import CreateButton from "./create-button";
 import MobileSidebar from "./mobile-sidebar";
-import { UserButton } from "@clerk/nextjs";
 import Sidebar from "./Sidebar";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/get-current-user";
+import { LogOut, User } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await getCurrentUser();
+
   return (
     <nav className="z-50 fixed bg-neutral-800 w-full h-14 flex items-center justify-between px-4 border-b border-b-gray-600">
       <div className="flex items-center gap-x-2">
@@ -17,17 +22,20 @@ const Navbar = () => {
       </div>
       <div className="flex items-center gap-x-4">
         <CreateButton />
-        <UserButton
-          afterSignOutUrl="/"
-          appearance={{
-            elements: {
-              avatarBox: {
-                height: 30,
-                width: 30,
-              },
-            },
-          }}
-        />
+        {user && (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white text-sm">
+              <User size={16} />
+              <span className="max-sm:hidden">{user.name}</span>
+            </div>
+            <Link href="/logout">
+              <Button variant="outline" size="sm" className="gap-2">
+                <LogOut size={16} />
+                <span className="max-sm:hidden">Logout</span>
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );

@@ -40,8 +40,23 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
       <div>
         <p className="font-semibold text-lg">{data.title}</p>
         <p className="text-sm text-gray-500">
-          {data.category[0].toUpperCase() + data.category.slice(1)}
+          {data.country || data.category[0].toUpperCase() + data.category.slice(1)}
         </p>
+        {data.dataPlan && data.validityDays && (
+          <div className="flex gap-2 mt-1">
+            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              {data.dataPlan}
+            </span>
+            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+              {data.validityDays} ngày
+            </span>
+            {data.simType && (
+              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                {data.simType}
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="flex items-center justify-between">
         {data.finalPrice && data.finalPrice > 0 ? (

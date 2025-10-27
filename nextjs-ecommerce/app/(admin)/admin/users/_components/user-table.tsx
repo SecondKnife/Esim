@@ -24,14 +24,12 @@ type UserData = {
 };
 
 type User = {
-  username?: string;
   id: string;
-  firstName?: string;
-  lastName?: string;
-  imageUrl?: string;
-  isAdmin?: boolean;
-  emailAddress: string;
-  createdAt: number;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 const UserTable = () => {
@@ -106,33 +104,32 @@ const UserTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentProducts?.map((user: any) => {
-              const timestamp = user.createdAt;
-              const date = new Date(timestamp);
+            {currentProducts?.map((user: User) => {
+              const date = new Date(user.createdAt);
               return (
                 <TableRow
                   key={user.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    <Image
-                      src={`${user?.imageUrl}`}
-                      alt="Product Image"
-                      className="border rounded-full"
-                      width={60}
-                      height={60}
-                    />
+                    <div className="w-[60px] h-[60px] rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
                   </TableCell>
                   <TableCell align="left">
-                    {user.username
-                      ? user.username
-                      : `${user?.firstName} ${user?.lastName}`}
+                    {user.name}
                   </TableCell>
                   <TableCell align="center">
-                    {user.unsafeMetadata.isAdmin ? "Admin" : "User"}
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      user.role === "ADMIN" 
+                        ? "bg-purple-100 text-purple-800" 
+                        : "bg-blue-100 text-blue-800"
+                    }`}>
+                      {user.role}
+                    </span>
                   </TableCell>
                   <TableCell align="center">
-                    {user.emailAddresses[0].emailAddress}
+                    {user.email}
                   </TableCell>
                   <TableCell align="center">
                     <p>{formatDate(date.toString())}</p>
