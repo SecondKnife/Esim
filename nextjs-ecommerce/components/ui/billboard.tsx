@@ -14,7 +14,10 @@ const Billboard = () => {
       >
         <div className="h-full w-full flex flex-col justify-center items-center text-center gap-y-8">
           <div className="font-bold text-3xl sm:text-5xl lg:text-6xl sm:max-w-xl max-w-xs">
-            KEMAL STORE
+            eSIM STORE
+          </div>
+          <div className="font-semibold text-lg sm:text-xl text-gray-600">
+            Sim du lịch & eSIM quốc tế tới 200 quốc gia
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ const HomePage = async () => {
   const products = await getAllProducts();
 
   const featuredProducts = products.filter(
-    (product: Product) => product.featured
+    (product) => product.featured
   );
 
   return (
@@ -25,7 +25,17 @@ const HomePage = async () => {
       <div className="mb-24">
         <TitleHeader title="Featured Products" url="/featured" />
         {featuredProducts.length > 0 && (
-          <CarouselFeatured data={featuredProducts} />
+          <CarouselFeatured
+            data={featuredProducts.map((product) => {
+              const { discount, finalPrice, ...rest } = product;
+              return {
+                ...rest,
+                price: product.price.toString(),
+                finalPrice: finalPrice ?? 0,
+                ...(typeof discount !== "undefined" && discount !== null ? { discount } : {}),
+              };
+            })}
+          />
         )}
       </div>
       <Footer />

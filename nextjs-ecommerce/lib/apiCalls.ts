@@ -1,51 +1,64 @@
 import { Category, Product } from "@/types";
-import axios from "axios";
+import { db } from "./db";
 
 export async function getProduct(productId: string) {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/product/${productId}`
-  );
-
-  return res.data;
+  try {
+    const product = await db.product.findUnique({
+      where: { id: productId },
+    });
+    return product;
+  } catch (error) {
+    throw new Error("Error getting product");
+  }
 }
 
 export async function getCategoryProducts(category: string) {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/product/category/${category}`
-  );
-
-  return res.data;
+  try {
+    const products = await db.product.findMany({
+      where: { category },
+    });
+    return products;
+  } catch (error) {
+    throw new Error("Error getting category products");
+  }
 }
 
 export const getCategories = async (): Promise<Category[]> => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
-  );
-
-  return res.data;
+  try {
+    const categories = await db.category.findMany();
+    return categories;
+  } catch (error) {
+    throw new Error("Error getting categories");
+  }
 };
 
 export const getCategory = async (category: string): Promise<Category[]> => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/categories/edit/${category}`
-  );
-
-  return res.data;
+  try {
+    const categories = await db.category.findMany({
+      where: { id: category },
+    });
+    return categories;
+  } catch (error) {
+    throw new Error("Error getting category");
+  }
 };
 
 export async function getAllProducts() {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/product/`
-  );
-
-  return res.data;
+  try {
+    const products = await db.product.findMany();
+    return products;
+  } catch (error) {
+    throw new Error("Error getting products");
+  }
 }
 
 export async function getFeaturedProducts() {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/product/`
-  );
-
-  const featured = res.data.filter((product: Product) => product.featured);
-  return featured;
+  try {
+    const products = await db.product.findMany({
+      where: { featured: true },
+    });
+    return products;
+  } catch (error) {
+    throw new Error("Error getting featured products");
+  }
 }

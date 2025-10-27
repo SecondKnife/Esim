@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs";
+import { getCurrentUser } from '@/lib/get-current-user';
 import { NextResponse } from "next/server";
 
 type GraphData = {
@@ -8,9 +8,9 @@ type GraphData = {
 };
 
 export async function GET(req: Request) {
-  const { userId } = auth();
+  const user = await getCurrentUser();
 
-  if (!userId) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized", status: 401 });
   }
 

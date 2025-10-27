@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs";
+import { getCurrentUser } from "@/lib/get-current-user";
 
 async function convertFileToBase64(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
@@ -9,9 +9,9 @@ async function convertFileToBase64(file: File): Promise<string> {
 }
 
 export async function POST(req: Request) {
-  const { userId } = auth();
+  const user = await getCurrentUser();
 
-  if (!userId) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized", status: 401 });
   }
 

@@ -1,19 +1,26 @@
 import Container from "./ui/container";
 import Logo from "./Logo";
 import NavbarActions from "./navbar-actions";
-import {
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  currentUser,
-} from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import NavbarSearch from "./navbar-search";
 import MobileSidebar from "@/app/(admin)/_components/mobile-sidebar";
 import NavItem from "./nav-item";
+import Link from "next/link";
 
 const NavBar = async () => {
-  const user = await currentUser();
+  // Fetch current user from API
+  let user = null;
+  try {
+    const response = await fetch("http://localhost:3000/api/auth/me", {
+      cache: "no-store",
+    });
+    if (response.ok) {
+      const data = await response.json();
+      user = data.user;
+    }
+  } catch (error) {
+    user = null;
+  }
 
   return (
     <div className="border-b">
@@ -33,27 +40,26 @@ const NavBar = async () => {
           <div className="flex items-center">
             <NavbarActions />
             {user ? (
-              <div className="ml-2">
-                <UserButton
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: {
-                        height: 35,
-                        width: 35,
-                      },
-                    },
-                  }}
-                />
+              <div className="ml-2 flex items-center gap-2">
+                <Link href="/logout">
+                  <Button className="rounded-sm" variant="outline">
+                    {user.name}
+                  </Button>
+                </Link>
+                {user.role === "ADMIN" && (
+                  <Link href="/admin">
+                    <Button className="rounded-sm">Admin</Button>
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="flex items-center gap-2 ml-2">
-                <Button className="rounded-sm" asChild>
-                  <SignUpButton />
-                </Button>
-                <Button className="rounded-sm" asChild>
-                  <SignInButton />
-                </Button>
+                <Link href="/signup">
+                  <Button className="rounded-sm">Sign Up</Button>
+                </Link>
+                <Link href="/login">
+                  <Button className="rounded-sm" variant="outline">Sign In</Button>
+                </Link>
               </div>
             )}
           </div>

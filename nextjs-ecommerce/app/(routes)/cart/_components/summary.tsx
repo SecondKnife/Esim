@@ -7,13 +7,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingDots from "./loading-dots";
-import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const Summary = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { userId } = useAuth();
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -37,9 +35,17 @@ const Summary = () => {
 
   const onCheckout = async () => {
     setLoading(true);
-    if (!userId) {
+    
+    // Check if user is logged in
+    try {
+      const response = await axios.get("/api/auth/me");
+      if (!response.data.user) {
+        setLoading(false);
+        return router.push("/login");
+      }
+    } catch {
       setLoading(false);
-      return router.push("/sign-in");
+      return router.push("/login");
     }
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/checkout`,

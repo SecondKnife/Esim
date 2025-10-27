@@ -8,7 +8,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import ProductCard from "./ui/product-card";
 
 type CarouselFeaturedProps = {
@@ -22,11 +21,6 @@ const CarouselFeatured = ({ data }: CarouselFeaturedProps) => {
         align: "start",
         loop: true,
       }}
-      plugins={[
-        Autoplay({
-          delay: 2000,
-        }),
-      ]}
       className="w-full relative"
     >
       <CarouselPrevious className="absolute z-50 left-7 w-min h-min text-xl p-4 top-[45%]" />
