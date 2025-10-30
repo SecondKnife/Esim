@@ -109,7 +109,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
       <Card>
         <CardContent className="p-6">
           <h3 className="text-xl font-bold mb-4">
-            Nhà mạng di động nào là "đỉnh" nhất tại {product.country}?
+            Nhà mạng di động nào là &ldquo;đỉnh&rdquo; nhất tại {product.country}?
           </h3>
           <p className="text-gray-700 mb-4">
             {carrier.name} hiện đang nắm giữ vị trí thủ lĩnh thị trường {product.country}. 
@@ -157,7 +157,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
               <div>
                 <div className="font-semibold">Kích hoạt</div>
                 <div className="text-gray-600">
-                  Bật "Dữ liệu di động/ Cellular Data" và "Chuyển vùng dữ liệu"/ Data Roaming
+                  Bật &ldquo;Dữ liệu di động/ Cellular Data&rdquo; và &ldquo;Chuyển vùng dữ liệu&rdquo;/ Data Roaming
                 </div>
               </div>
             </div>

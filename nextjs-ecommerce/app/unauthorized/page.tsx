@@ -27,7 +27,7 @@ export default async function UnauthorizedPage() {
         </h1>
         
         <p className="text-lg text-gray-600 mb-2">
-          You don't have permission to access this page
+          You don&apos;t have permission to access this page
         </p>
         
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8 border border-red-200">

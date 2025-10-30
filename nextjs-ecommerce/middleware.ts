@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
@@ -25,19 +22,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    try {
-      // Verify JWT token (no database query)
-      jwt.verify(token, JWT_SECRET);
-      // Token is valid, allow access
-      // Note: We can't check user role here without database query
-      // Role check will be done in the admin layout or individual pages
-      return NextResponse.next();
-    } catch (error) {
-      // Invalid or expired token
-      const url = new URL("/login", request.url);
-      url.searchParams.set("redirect", request.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
+    // Token exists, allow access
+    // Full verification will be done in API routes and server components
+    // This middleware just checks for token presence
+    return NextResponse.next();
   }
 
   return NextResponse.next();
