@@ -103,9 +103,11 @@ const ProductDetailPage = () => {
     );
   }
 
-  const images = JSON.parse(product.imageURLs || "[]");
+  const images = typeof product.imageURLs === 'string' 
+    ? JSON.parse(product.imageURLs || "[]") 
+    : product.imageURLs;
   const currentPrice = product.finalPrice || product.price;
-  const savings = product.finalPrice ? product.price - product.finalPrice : 0;
+  const savings = product.finalPrice && product.finalPrice > 0 ? product.price - product.finalPrice : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">

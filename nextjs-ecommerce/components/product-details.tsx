@@ -48,7 +48,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
     }
   };
 
-  const carrier = carrierInfo[product.country] || {
+  const carrier = (product.country && carrierInfo[product.country]) || {
     name: "Local Carrier",
     coverage: "Phủ sóng tốt",
     features: ["4G LTE", "WiFi Hotspot"]
@@ -117,7 +117,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
             bạn sẽ thoải mái dùng Internet tốc độ cao trong suốt hành trình của mình.
           </p>
           <div className="flex flex-wrap gap-2">
-            {carrier.features.map((feature, index) => (
+            {carrier.features.map((feature: string, index: number) => (
               <span
                 key={index}
                 className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"

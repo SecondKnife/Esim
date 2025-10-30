@@ -84,7 +84,7 @@ const HomePage = async () => {
               const { discount, finalPrice, ...rest } = product;
               return {
                 ...rest,
-                price: product.price.toString(),
+                price: product.price,
                 finalPrice: finalPrice ?? 0,
                 ...(typeof discount !== "undefined" && discount !== null ? { discount } : {}),
               };

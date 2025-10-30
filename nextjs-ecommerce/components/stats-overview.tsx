@@ -27,9 +27,9 @@ const StatsOverview = () => {
         const categories = await categoriesRes.json();
 
         // Extract unique values
-        const countries = [...new Set(products.map((p: any) => p.country).filter(Boolean))];
-        const dataPlans = [...new Set(products.map((p: any) => p.dataPlan).filter(Boolean))];
-        const simTypes = [...new Set(products.map((p: any) => p.simType).filter(Boolean))];
+        const countries = Array.from(new Set(products.map((p: any) => p.country).filter(Boolean))) as string[];
+        const dataPlans = Array.from(new Set(products.map((p: any) => p.dataPlan).filter(Boolean))) as string[];
+        const simTypes = Array.from(new Set(products.map((p: any) => p.simType).filter(Boolean))) as string[];
 
         setStats({
           totalProducts: products.length,

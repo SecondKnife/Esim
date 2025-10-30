@@ -3,12 +3,18 @@ export interface Product {
   category: string;
   description: string;
   title: string;
-  price: string;
+  price: number;
   featured: boolean;
   imageURLs: string | string[];
-  discount?: number;
-  finalPrice?: number;
+  discount?: number | null;
+  finalPrice?: number | null;
   size?: string;
+  // eSIM specific fields
+  country?: string | null;
+  region?: string | null;
+  dataPlan?: string | null;
+  validityDays?: number | null;
+  simType?: string | null;
 }
 
 export interface Image {
