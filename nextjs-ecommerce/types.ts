@@ -37,7 +37,7 @@ export interface RequestData {
   title: string;
   description: string;
   price: number;
-  files: File[];
+  imageURLs: string[];
   featured: boolean;
   category: string;
   sizes: SelectedSize[];

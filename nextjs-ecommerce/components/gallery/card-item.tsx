@@ -29,23 +29,11 @@ const CardItem = ({ billboard, category }: CardProps) => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null;
+  if (!isMounted || !billboards) {
+    return <LoadingSkeleton />;
   }
 
-      // Map country names to image URLs
-      const countryImages: { [key: string]: string } = {
-        "Thailand": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/thailand.png",
-        "Singapore": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/singapore.png",
-        "USA": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/usa.png",
-        "Japan": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/japan.png",
-        "Europe": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/europe.png",
-        "Asia": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/asia.png",
-        "Korea": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/korea.png",
-        "Australia": "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/australia.png",
-      };
-
-  const imageUrl = countryImages[category] || "https://kemal-web-storage.s3.eu-north-1.amazonaws.com/default.png";
+  const imageUrl = billboards.imageURL || ""
 
   return (
     <Card>

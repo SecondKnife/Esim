@@ -5,6 +5,7 @@ import { Category, Product } from "@/types";
 import { Button } from "../ui/button";
 import useCart from "@/hooks/use-cart";
 import { useState } from "react";
+import { formatVND } from "@/lib/utils";
 
 interface InfoProps {
   data: Product;
@@ -36,19 +37,19 @@ const Info: React.FC<InfoProps> = ({ data, categories, availableSizes }) => {
           <div className="font-semibold">
             <div className="flex items-center gap-2">
               <span className="text-gray-500 line-through">
-                ${Number(data?.price).toFixed(2)}
+                {formatVND(data.price)}
               </span>
               <div className=" bg-red-600 text-sm text-white  p-1 px-1 font-semibold rounded-sm">
                 -{data?.discount}%
               </div>
             </div>
             <p className="text-2xl text-gray-900 font-semibold mt-1">
-              ${data.finalPrice.toFixed(2)}
+              {formatVND(data.finalPrice)}
             </p>
           </div>
         ) : (
           <p className="text-2xl text-gray-900 font-semibold">
-            ${Number(data?.price).toFixed(2)}
+            {formatVND(data.price)}
           </p>
         )}
       </div>
@@ -133,7 +134,7 @@ const Info: React.FC<InfoProps> = ({ data, categories, availableSizes }) => {
               : ""
           }`}
         >
-          Add To Cart
+          Thêm vào giỏ hàng
           <ShoppingCart size={20} />
         </Button>
       </div>

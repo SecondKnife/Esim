@@ -47,7 +47,7 @@ const NavbarSearch = () => {
       <Input
         size={35}
         className="pr-12 outline-none rounded-xl max-md:text-white bg-transparent"
-        placeholder="Search for products..."
+        placeholder="Tìm kiếm sản phẩm..."
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleKeyDown}
         value={search}

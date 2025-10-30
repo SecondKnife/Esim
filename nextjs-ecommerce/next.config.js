@@ -15,6 +15,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "**.r2.dev",
       },
+      // Unsplash images
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
       // Thêm custom domain của bạn nếu có
       // {
       //   protocol: "https",

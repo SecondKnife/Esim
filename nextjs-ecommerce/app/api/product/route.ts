@@ -2,12 +2,6 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/get-current-user";
 
-async function convertFileToBase64(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const base64 = Buffer.from(buffer).toString('base64');
-  return `data:${file.type};base64,${base64}`;
-}
-
 export async function POST(req: Request) {
   const user = await getCurrentUser();
 
@@ -16,36 +10,19 @@ export async function POST(req: Request) {
   }
 
   try {
-    const formData = await req.formData();
-    const files = formData.getAll("files");
-
-    const fileNames: string[] = [];
-    if (!files) {
-      return NextResponse.json({ error: "File is required" }, { status: 400 });
-    }
-
-    if (files) {
-      for (const file of Array.from(files)) {
-        if (file instanceof File) {
-          const base64 = await convertFileToBase64(file);
-          fileNames.push(base64);
-        }
-      }
-    }
-
-    const requestData = formData.get("requestData") as string;
-    const productInfo = JSON.parse(requestData);
+    const body = await req.json();
 
     const {
       title,
       description,
       price,
+      imageURLs,
       featured,
       category,
       sizes,
       categoryId,
       discount,
-    } = productInfo;
+    } = body;
 
     if (
       !title ||
@@ -53,7 +30,9 @@ export async function POST(req: Request) {
       !description ||
       description.length < 4 ||
       !price ||
-      !fileNames ||
+      !imageURLs ||
+      !Array.isArray(imageURLs) ||
+      imageURLs.length === 0 ||
       !category
     ) {
       return NextResponse.json(
@@ -74,7 +53,7 @@ export async function POST(req: Request) {
         description,
         price,
         featured,
-        imageURLs: JSON.stringify(fileNames),
+        imageURLs: JSON.stringify(imageURLs),
         category,
         categoryId,
         discount,

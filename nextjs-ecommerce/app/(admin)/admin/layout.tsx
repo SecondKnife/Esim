@@ -12,11 +12,13 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?redirect=/admin");
   }
 
-  if (user.role !== "ADMIN") {
-    redirect("/");
+  // Chỉ cho phép ADMIN và MODERATOR
+  const allowedRoles = ["ADMIN", "MODERATOR"];
+  if (!allowedRoles.includes(user.role)) {
+    redirect("/unauthorized");
   }
 
   return (

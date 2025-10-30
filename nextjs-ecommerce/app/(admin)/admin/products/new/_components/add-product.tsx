@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import ImageUpload from "@/components/admin/image-upload";
 
 type Category = {
   id: string;
@@ -20,7 +21,7 @@ type initialState = {
   description: string;
   price: string;
   category: string;
-  files: File[];
+  imageURLs: string[];
   isFeatured: boolean;
   categoryId: string;
   sizes: SelectedSize[];
@@ -37,7 +38,7 @@ const AddProduct = () => {
     price: "",
     category: "",
     categoryId: "",
-    files: [],
+    imageURLs: [],
     isFeatured: false,
     sizes: selectedSizes,
     discount: "",
@@ -46,14 +47,13 @@ const AddProduct = () => {
   const [category, setCategory] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [dataForm, setDataForm] = useState<initialState>(initialState);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const [availableSizes, setAvailableSizes] = useState([]);
   const [errors, setErrors] = useState({
     title: "",
     description: "",
     price: "",
-    files: "",
+    imageURLs: "",
     category: "",
   });
 
@@ -87,23 +87,12 @@ const AddProduct = () => {
     }
   }, [dataForm.categoryId]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files as FileList;
-    setDataForm((prevData) => ({
-      ...prevData,
-      files: [...prevData.files, ...Array.from(selectedFiles)],
-    }));
-
-    if (selectedFiles.length > 0) {
-      const imagePreviews: string[] = Array.from(selectedFiles).map(
-        (file) => URL.createObjectURL(file) as string
-      );
-      setImagePreviews((prev) => [...prev, ...imagePreviews]);
-    }
-  };
-
   const handleCheckboxChange = (isChecked: boolean) => {
     setDataForm((prevData) => ({ ...prevData, isFeatured: isChecked }));
+  };
+
+  const handleImageUrlsChange = (urls: string[]) => {
+    setDataForm((prevData) => ({ ...prevData, imageURLs: urls }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,7 +102,7 @@ const AddProduct = () => {
       title: "",
       description: "",
       price: "",
-      files: "",
+      imageURLs: "",
       category: "",
     });
 
@@ -123,7 +112,7 @@ const AddProduct = () => {
       !dataForm.description ||
       dataForm.description.length < 4 ||
       !dataForm.price ||
-      dataForm.files.length === 0 ||
+      dataForm.imageURLs.length === 0 ||
       !dataForm.category
     ) {
       setIsLoading(false);
@@ -138,8 +127,8 @@ const AddProduct = () => {
             ? "Description must be at least 4 characters"
             : "",
         price: !dataForm.price ? "Please enter a price" : "",
-        files:
-          dataForm.files.length === 0 ? "Please select at least one file" : "",
+        imageURLs:
+          dataForm.imageURLs.length === 0 ? "Please upload at least one image" : "",
         category: !dataForm.category ? "Please select a category" : "",
       }));
 
@@ -152,36 +141,27 @@ const AddProduct = () => {
       title: dataForm.title,
       description: dataForm.description,
       price: convPrice,
-      files: dataForm.files,
+      imageURLs: dataForm.imageURLs,
       featured: dataForm.isFeatured,
       category: dataForm.category,
       sizes: selectedSizes,
       categoryId: dataForm.categoryId,
     };
 
-    if (dataForm.discount !== undefined) {
+    if (dataForm.discount !== undefined && dataForm.discount !== "") {
       requestData.discount = +dataForm.discount;
     }
 
-    const formData = new FormData();
-
-    Array.from(dataForm.files).forEach((file) => {
-      formData.append("files", file);
-    });
-
-    formData.append("requestData", JSON.stringify(requestData));
-
     try {
-      const res = await axios.post("/api/product", formData, {
+      const res = await axios.post("/api/product", requestData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
       toast.success("Product created successfully");
 
       router.push("/admin/products");
       setIsLoading(false);
-      setImagePreviews([]);
     } catch (error) {
       setIsLoading(false);
       toast.error("Something went wrong!");
@@ -326,28 +306,15 @@ const AddProduct = () => {
             <div>This product will appear on the home page</div>
           </div>
         </div>
-        <label htmlFor="image">Add Product Image</label>
-        <Input
-          type="file"
-          id="image"
-          name="image"
-          required
-          onChange={handleFileChange}
-          multiple
+        <label htmlFor="image">Add Product Images</label>
+        <ImageUpload
+          value={dataForm.imageURLs}
+          onChange={handleImageUrlsChange}
+          folder="products"
+          maxFiles={5}
+          disabled={isLoading}
         />
-        {errors.files && <p className="text-red-500">{errors.files}</p>}
-        <div className="flex gap-2">
-          {imagePreviews.map((preview, index) => (
-            <Image
-              key={index}
-              src={preview}
-              alt={`Preview ${index}`}
-              width={100}
-              height={100}
-              className="rounded-sm"
-            />
-          ))}
-        </div>
+        {errors.imageURLs && <p className="text-red-500">{errors.imageURLs}</p>}
         <Button disabled={isLoading} className="mt-2 bg-green-600">
           Add Product
         </Button>

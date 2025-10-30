@@ -55,10 +55,8 @@ const HomePage = async () => {
 
   return (
     <>
-      {/* Hero Section - Immediate Load */}
-      <Container>
-        <HeroSection />
-      </Container>
+      {/* Hero Section - Full Width Banner */}
+      <HeroSection />
 
       {/* Feature Highlights */}
       <FeatureHighlights />

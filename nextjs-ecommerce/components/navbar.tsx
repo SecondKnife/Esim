@@ -6,26 +6,16 @@ import NavbarSearch from "./navbar-search";
 import MobileSidebar from "@/app/(admin)/_components/mobile-sidebar";
 import NavItem from "./nav-item";
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/get-current-user";
 
 const NavBar = async () => {
-  // Fetch current user from API
-  let user = null;
-  try {
-    const response = await fetch("http://localhost:3000/api/auth/me", {
-      cache: "no-store",
-    });
-    if (response.ok) {
-      const data = await response.json();
-      user = data.user;
-    }
-  } catch (error) {
-    user = null;
-  }
+  // Get current user
+  const user = await getCurrentUser();
 
   return (
-    <div className="border-b">
+    <div className="border-b bg-white shadow-sm sticky top-0 z-50">
       <Container>
-        <div className="px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
+        <div className="px-4 sm:px-6 lg:px-8 flex h-20 items-center justify-between">
           <MobileSidebar>
             <NavbarSearch />
             <NavItem />
@@ -37,28 +27,42 @@ const NavBar = async () => {
           <div className="max-md:hidden">
             <NavbarSearch />
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <NavbarActions />
             {user ? (
-              <div className="ml-2 flex items-center gap-2">
-                <Link href="/logout">
-                  <Button className="rounded-sm" variant="outline">
-                    {user.name}
-                  </Button>
-                </Link>
-                {user.role === "ADMIN" && (
-                  <Link href="/admin">
-                    <Button className="rounded-sm">Admin</Button>
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className="text-sm">
+                    <p className="font-semibold text-gray-900">{user.name}</p>
+                    <p className="text-xs text-gray-500 capitalize">{user.role.toLowerCase()}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {(user.role === "ADMIN" || user.role === "MODERATOR") && (
+                    <Link href="/admin">
+                      <Button className="rounded-full bg-orange-500 hover:bg-orange-600 text-white" size="sm">
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Link href="/logout">
+                    <Button className="rounded-full border-2 border-orange-500 text-orange-500 hover:bg-orange-50" variant="outline" size="sm">
+                      Đăng xuất
+                    </Button>
                   </Link>
-                )}
+                </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 ml-2">
+              <div className="flex items-center gap-2">
                 <Link href="/signup">
-                  <Button className="rounded-sm">Sign Up</Button>
+                  <Button className="rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold" size="sm">
+                    Đăng ký
+                  </Button>
                 </Link>
                 <Link href="/login">
-                  <Button className="rounded-sm" variant="outline">Sign In</Button>
+                  <Button className="rounded-full border-2 border-orange-500 text-orange-500 hover:bg-orange-50 font-semibold" variant="outline" size="sm">
+                    Đăng nhập
+                  </Button>
                 </Link>
               </div>
             )}

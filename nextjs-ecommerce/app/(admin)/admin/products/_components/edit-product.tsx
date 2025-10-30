@@ -48,9 +48,13 @@ const EditProduct = () => {
     return <div>Product not found</div>;
   }
 
-  const handleFormSubmit = async (formData: FormData) => {
+  const handleFormSubmit = async (formData: any) => {
     try {
-      const res = await axios.put(`/api/product/edit/${productId}`, formData);
+      const res = await axios.put(`/api/product/edit/${productId}`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       toast.success("Product edit successfully");
       router.push("/admin/products");
     } catch (error) {

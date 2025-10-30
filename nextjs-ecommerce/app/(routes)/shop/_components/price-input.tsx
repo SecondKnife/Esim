@@ -1,9 +1,10 @@
 "use client";
 
-import { getCategoryProducts } from "@/lib/apiCalls";
 import { Product } from "@/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { formatVND } from "@/lib/utils";
 
 type PriceInputProps = {
   data: Product[];
@@ -38,18 +39,34 @@ const PriceInput = ({ data }: PriceInputProps) => {
   useEffect(() => {
     const fetchProductPrice = async () => {
       if (pathName.startsWith("/shop/") && pathName !== "/shop") {
-        const urlString = pathName.substring("/shop/".length);
-        const data = await getCategoryProducts(urlString);
-        const prices = data?.map((product: Product) => {
-          if (product.finalPrice && product.finalPrice > 0) {
-            return product.finalPrice;
-          } else {
-            return product.price;
-          }
-        });
-        setMaxPrice(Math.max(...prices));
-        setMinPrice(Math.min(...prices));
-        setValue(maxPrice);
+        try {
+          const urlString = pathName.substring("/shop/".length);
+          const response = await axios.get(`/api/product/category/${urlString}`);
+          const categoryData = response.data;
+          const prices = categoryData?.map((product: Product) => {
+            if (product.finalPrice && product.finalPrice > 0) {
+              return product.finalPrice;
+            } else {
+              return product.price;
+            }
+          });
+          setMaxPrice(Math.max(...prices));
+          setMinPrice(Math.min(...prices));
+          setValue(Math.max(...prices));
+        } catch (error) {
+          console.error("Error fetching category products:", error);
+          // Fallback to using data prop
+          const prices = data?.map((product: Product) => {
+            if (product.finalPrice && product.finalPrice > 0) {
+              return product.finalPrice;
+            } else {
+              return +product.price;
+            }
+          });
+          setMaxPrice(Math.max(...prices));
+          setMinPrice(Math.min(...prices));
+          setValue(Math.max(...prices));
+        }
       } else {
         const prices = data?.map((product: Product) => {
           if (product.finalPrice && product.finalPrice > 0) {
@@ -60,19 +77,19 @@ const PriceInput = ({ data }: PriceInputProps) => {
         });
         setMaxPrice(Math.max(...prices));
         setMinPrice(Math.min(...prices));
-        setValue(maxPrice);
+        setValue(Math.max(...prices));
       }
     };
 
     fetchProductPrice();
-  }, [pathName, data, maxPrice]);
+  }, [pathName, data]);
 
   return (
     <div className="range-container mt-2">
       <div className="range-label flex justify-between">
         <div className="flex flex-col gap-y-1">
-          <p className="font-semibold">Price</p>
-          <span className="font-serif">${value?.toFixed(2)}</span>
+          <p className="font-semibold">Giá tiền</p>
+          <span className="font-serif">{formatVND(value || 0)}</span>
         </div>
       </div>
       <input

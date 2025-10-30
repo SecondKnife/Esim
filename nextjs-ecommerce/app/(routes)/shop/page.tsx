@@ -32,7 +32,7 @@ const ShopPage = async ({
   if (searchParams.q && filtered && filtered.length <= 0) {
     return (
       <p className="font-serif text-lg">
-        There are no products that match{" "}
+        Không tìm thấy sản phẩm nào phù hợp với{" "}
         <span className="font-bold">{`"${searchParams.q}"`}</span>
       </p>
     );
@@ -41,7 +41,7 @@ const ShopPage = async ({
   if (searchParams.q && filtered && filtered.length > 0) {
     searchMsg = (
       <p className="font-serif text-lg mb-3">
-        Showing {filtered.length} results for{" "}
+        Hiển thị {filtered.length} kết quả cho{" "}
         <span className="font-bold">{`"${searchParams.q}"`}</span>
       </p>
     );
@@ -55,14 +55,18 @@ const ShopPage = async ({
       </div>
 
       {/* Search Results */}
-      {searchMsg ? searchMsg : ""}
+      {searchMsg && (
+        <div className="mb-6 px-4">
+          {searchMsg}
+        </div>
+      )}
       
       {/* All Products Grid */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+      <div className="mb-12">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">
           Tất cả sản phẩm eSIM/SIM
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {(filtered || data)?.map((product: any) => (
             <ProductCard key={product.id} data={product} />
           ))}

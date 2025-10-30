@@ -6,7 +6,7 @@ import { Product } from "@/types";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { parseImageURLs } from "@/lib/utils";
+import { parseImageURLs, formatVND } from "@/lib/utils";
 
 interface CartItemProps {
   data: CartItem;
@@ -61,10 +61,10 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
           <div className="flex flex-col mt-2 gap-y-3 max-md:flex-row max-md:justify-between max-md:items-center">
             <p className="text-lg text-gray-900 font-semibold">
               {data.totalPrice
-                ? `$${data.totalPrice.toFixed(2)}`
+                ? formatVND(data.totalPrice)
                 : data.finalPrice
-                ? `$${data.finalPrice.toFixed(2)}`
-                : `$${Number(data?.price).toFixed(2)}`}
+                ? formatVND(data.finalPrice)
+                : formatVND(data.price)}
             </p>
             <div className="flex max-md:justify-end w-full">
               <div className="border w-28 rounded-3xl p-2 gap-2 flex justify-between">

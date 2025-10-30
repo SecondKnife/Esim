@@ -7,13 +7,13 @@ const SortItems = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [selectedSort, setSelectedSort] = useState<string>("Relevance");
+  const [selectedSort, setSelectedSort] = useState<string>("Phù hợp");
 
   const handleSortChange = useCallback(
     async (value: string) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
 
-      if (!value || value === "Relevance") {
+      if (!value || value === "Phù hợp") {
         current.delete("sort");
       } else {
         current.set("sort", value);
@@ -36,7 +36,7 @@ const SortItems = () => {
     <div className="flex items-center mb-4">
       <div className="flex-grow h-0.5 bg-neutral-800 ml-1 mr-5"></div>
       <div className="flex items-center">
-        <p className="font-semibold text-sm">Sort by</p>
+        <p className="font-semibold text-sm">Sắp xếp theo</p>
         <select
           className="ml-2 border border-neutral-800 p-1 text-sm"
           name="sorting"
@@ -44,10 +44,10 @@ const SortItems = () => {
           value={selectedSort}
           onChange={(e) => handleSortChange(e.target.value)}
         >
-          <option value="">Relevance</option>
-          <option value="latest-arrivals">Latest arrivals</option>
-          <option value="price-low-to-high">Low to high</option>
-          <option value="price-high-to-low">High to low</option>
+          <option value="">Phù hợp</option>
+          <option value="latest-arrivals">Mới nhất</option>
+          <option value="price-low-to-high">Giá thấp đến cao</option>
+          <option value="price-high-to-low">Giá cao đến thấp</option>
         </select>
       </div>
     </div>

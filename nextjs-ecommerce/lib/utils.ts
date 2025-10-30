@@ -15,3 +15,19 @@ export function parseImageURLs(imageURLs: string | string[]): string[] {
   }
   return imageURLs;
 }
+
+/**
+ * Format number to Vietnamese currency (VND)
+ * @param amount - The amount to format
+ * @returns Formatted string with VND symbol (e.g., "180.000đ")
+ */
+export function formatVND(amount: number | string): string {
+  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  if (isNaN(num)) return '0đ';
+  
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num) + 'đ';
+}

@@ -2,12 +2,6 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/get-current-user";
 
-async function convertFileToBase64(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const base64 = Buffer.from(buffer).toString('base64');
-  return `data:${file.type};base64,${base64}`;
-}
-
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
@@ -40,102 +34,80 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { userId } = auth();
+  const user = await getCurrentUser();
 
   try {
-    const formData = await req.formData();
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized", status: 401 });
     }
 
-    const title = formData.get("name") as string;
-    const price = formData.get("price") as string;
-    const description = formData.get("description") as string;
-    const category = formData.get("category") as string;
-    const featured = formData.get("isFeatured");
-    const discount = formData.get("discount") as number | null;
-    const isFeaturedBoolean = featured === "on";
-    const files = formData.getAll("image");
-    const fileNames: string[] = [];
+    const body = await req.json();
 
-    if (!files) {
-      return NextResponse.json({ error: "File is required" }, { status: 400 });
-    }
+    const {
+      title,
+      price,
+      description,
+      category,
+      featured,
+      discount,
+      imageURLs,
+      sizes,
+    } = body;
 
-    const sizes = JSON.parse(formData.get("productSizes") as string) as {
-      sizeId: string;
-      name: string;
-    }[];
+    const convPrice = +price;
 
-    const convPirce = +price;
-
+    // Get existing sizes for this product
     const existingSizes = await db.productSize.findMany({
       where: {
         productId: id,
       },
       select: {
         id: true,
+        sizeId: true,
       },
     });
 
-    const newSize = existingSizes.map((item) => item.id);
-    const existingSizes2 = sizes.filter((item, index) => item.sizeId);
-
-    const filteredExistingSizes2 = existingSizes2.filter(
-      (item: any) => !newSize.includes(item.id)
+    const existingSizeIds = existingSizes.map((item) => item.sizeId);
+    const newSizes = sizes || [];
+    
+    // Find new sizes to add
+    const sizesToAdd = newSizes.filter(
+      (size: any) => !existingSizeIds.includes(size.sizeId || size.id)
     );
 
     let priceDiscount: number = 0;
     
-    if (discount !== null && discount > 0) {
-      const mathDiscount = (discount / 100) * +price;
-      priceDiscount = +price - mathDiscount;
+    if (discount && discount > 0) {
+      const mathDiscount = (discount / 100) * convPrice;
+      priceDiscount = convPrice - mathDiscount;
     }
 
-    const updateData: {
-      title: string;
-      price: number;
-      description: string;
-      featured: boolean;
-      category: string;
-      finalPrice: number;
-      discount?: number;
-      imageURLs?: string;
-
-      productSizes?: {
-        create: {
-          size: { connect: { id: string } };
-          name: string;
-        }[];
-      };
-    } = {
-      featured: isFeaturedBoolean,
+    const updateData: any = {
+      featured: featured || false,
       title,
-      price: convPirce,
+      price: convPrice,
       description,
       category,
       finalPrice: priceDiscount,
-      productSizes: {
-        create: filteredExistingSizes2.map((size: any) => ({
-          size: { connect: { id: size.sizeId } },
-          name: size.name,
-        })),
-      },
     };
 
-    if (discount !== null && discount > 0) {
+    if (discount && discount > 0) {
       updateData.discount = +discount;
     }
     
-    if (files) {
-      for (const file of Array.from(files)) {
-        if (file instanceof File && file.name) {
-          const base64 = await convertFileToBase64(file);
-          fileNames.push(base64);
-        }
-      }
-      updateData.imageURLs = JSON.stringify(fileNames);
+    // Only update imageURLs if provided
+    if (imageURLs && Array.isArray(imageURLs) && imageURLs.length > 0) {
+      updateData.imageURLs = JSON.stringify(imageURLs);
+    }
+
+    // Add new sizes if any
+    if (sizesToAdd.length > 0) {
+      updateData.productSizes = {
+        create: sizesToAdd.map((size: any) => ({
+          size: { connect: { id: size.sizeId || size.id } },
+          name: size.name,
+        })),
+      };
     }
 
     const product = await db.product.update({
@@ -147,6 +119,7 @@ export async function PUT(
 
     return NextResponse.json({ product, msg: "Successful edit product" });
   } catch (error) {
-    return NextResponse.json({ error: "Error updating task", status: 500 });
+    console.error("Error updating product:", error);
+    return NextResponse.json({ error: "Error updating product", status: 500 });
   }
 }

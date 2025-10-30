@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
 import { type SizeProduct, type createData } from "./edit-product";
-import Image from "next/image";
 import axios from "axios";
+import ImageUpload from "@/components/admin/image-upload";
 
 type EditFormProps = {
   data: createData;
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: any) => void;
 };
 
 type Category = {
@@ -23,7 +23,7 @@ type InitialType = {
   description: string;
   price: number;
   category: string;
-  files: File[];
+  imageURLs: string[];
   isFeatured: boolean;
   productSizes?: SizeProduct[];
   categoryId: string;
@@ -42,14 +42,18 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
     categoryId,
     discount,
   } = data;
-  const baseUrl = "https://kemal-web-storage.s3.eu-north-1.amazonaws.com";
+
+  // Parse imageURLs if it's a JSON string
+  const parsedImageURLs = typeof imageURLs === 'string' 
+    ? JSON.parse(imageURLs) 
+    : imageURLs;
 
   const initialState = {
     title,
     description,
     price,
     category,
-    files: [],
+    imageURLs: parsedImageURLs || [],
     isFeatured: featured,
     productSizes: productSizes,
     categoryId,
@@ -58,7 +62,6 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [checkbox, setCheckBox] = useState<boolean>(featured);
-  const [previewImage, setPreviewImage] = useState<string[]>();
   const [dataForm, setDataForm] = useState<InitialType>(initialState);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -71,16 +74,12 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
   }, [featured]);
 
   useEffect(() => {
-    setPreviewImage(imageURLs);
-  }, [imageURLs]);
-
-  useEffect(() => {
     setDataForm({
       title,
       description,
       price,
       category,
-      files: [],
+      imageURLs: parsedImageURLs || [],
       isFeatured: featured,
       productSizes,
       categoryId,
@@ -92,7 +91,7 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
     description,
     price,
     category,
-    imageURLs,
+    parsedImageURLs,
     productSizes,
     categoryId,
     discount,
@@ -128,29 +127,27 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
     }
   }, [dataForm.categoryId]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files as FileList;
-    setDataForm((prevData) => ({
-      ...prevData,
-      files: [...prevData.files, ...Array.from(selectedFiles)],
-    }));
-
-    if (selectedFiles.length > 0) {
-      const imagePreviews: string[] = Array.from(selectedFiles).map(
-        (file) => URL.createObjectURL(file) as string
-      );
-      setPreviewImage(imagePreviews);
-    }
+  const handleImageUrlsChange = (urls: string[]) => {
+    setDataForm((prevData) => ({ ...prevData, imageURLs: urls }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    const formData = new FormData(e.currentTarget);
-    formData.append("isFeatured", checkbox.toString());
-    formData.append("productSizes", JSON.stringify(dataForm.productSizes));
-    await onSubmit(formData);
-
+    
+    const submitData = {
+      title: dataForm.title,
+      description: dataForm.description,
+      price: dataForm.price,
+      category: dataForm.category,
+      featured: checkbox,
+      imageURLs: dataForm.imageURLs,
+      discount: dataForm.discount,
+      sizes: dataForm.productSizes,
+      categoryId: dataForm.categoryId,
+    };
+    
+    await onSubmit(submitData);
     setIsLoading(false);
   };
 
@@ -273,31 +270,14 @@ const EditForm = ({ data, onSubmit }: EditFormProps) => {
           <div>This product will appear on the home page</div>
         </div>
       </div>
-      <label htmlFor="image">Change Product Image</label>
-      <Input
-        type="file"
-        id="image"
-        name="image"
-        onChange={handleFileChange}
-        multiple
+      <label htmlFor="image">Product Images</label>
+      <ImageUpload
+        value={dataForm.imageURLs}
+        onChange={handleImageUrlsChange}
+        folder="products"
+        maxFiles={5}
+        disabled={isLoading}
       />
-      <div className="flex gap-2">
-        {previewImage?.map((preview, index) => {
-          const isImageIncluded = imageURLs.includes(preview);
-          const imagePath = isImageIncluded ? `${baseUrl}${preview}` : preview;
-          return (
-            <Image
-              key={index}
-              src={imagePath}
-              alt={`Preview ${index}`}
-              width={100}
-              height={100}
-              className="rounded-sm"
-              priority={true}
-            />
-          );
-        })}
-      </div>
       <Button disabled={isLoading} type="submit" className="mt-2 bg-green-600">
         Save Changes
       </Button>

@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Product } from "@/types";
-import { parseImageURLs } from "@/lib/utils";
+import { parseImageURLs, formatVND } from "@/lib/utils";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 interface ProductCard {
   data: Product;
@@ -17,61 +18,112 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
     router.push(`/product/${data?.id}`);
   };
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/product/${data?.id}`);
+  };
+
   return (
-    <div
-      onClick={handleClick}
-      className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4 relative"
-    >
-      <div className="aspect-square rounded-xl bg-gray-100 relative overflow-hidden">
+    <div className="bg-white group cursor-pointer rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+      {/* Image Container */}
+      <div 
+        onClick={handleClick}
+        className="aspect-square relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
+      >
         <Image
           src={images[0] || "/placeholder.png"}
-          alt="Product"
+          alt={data.title}
           fill
-          className="aspect-square object-cover rounded-md opacity-0 hover:opacity-100 transform scale-100 hover:scale-110 duration-300 transition-all"
+          className="object-cover opacity-0 group-hover:scale-105 duration-300 transition-all"
           onLoad={(event: React.SyntheticEvent<HTMLImageElement, Event>) =>
             event.currentTarget.classList.remove("opacity-0")
           }
-          sizes="any"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="opacity-0 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
-          <div className="flex gap-x-6 justify-center"></div>
-        </div>
+        
+        {/* Discount Badge */}
+        {data.discount && data.discount > 0 && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+            -{data.discount}%
+          </div>
+        )}
       </div>
-      <div>
-        <p className="font-semibold text-lg">{data.title}</p>
-        <p className="text-sm text-gray-500">
-          {data.country || data.category[0].toUpperCase() + data.category.slice(1)}
-        </p>
-        {data.dataPlan && data.validityDays && (
-          <div className="flex gap-2 mt-1">
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-              {data.dataPlan}
-            </span>
-            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-              {data.validityDays} ngày
-            </span>
-            {data.simType && (
-              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-                {data.simType}
-              </span>
+
+      {/* Content */}
+      <div className="p-4 space-y-3">
+        {/* Title & Location */}
+        <div onClick={handleClick}>
+          <h3 className="font-bold text-base text-gray-900 line-clamp-2 min-h-[3rem]">
+            {data.title}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {data.country || data.category[0].toUpperCase() + data.category.slice(1)}
+          </p>
+        </div>
+
+        {/* Plan Details */}
+        {(data.dataPlan || data.validityDays) && (
+          <div className="flex flex-col gap-1 text-xs text-gray-700">
+            {data.validityDays && (
+              <div className="flex items-center gap-1">
+                <span className="text-gray-500">{data.validityDays} ngày sử dụng</span>
+              </div>
+            )}
+            {data.dataPlan && (
+              <div className="flex items-center gap-1">
+                <span className="text-gray-500">Internet tốc độ cao</span>
+              </div>
             )}
           </div>
         )}
-      </div>
-      <div className="flex items-center justify-between">
-        {data.finalPrice && data.finalPrice > 0 ? (
-          <div className="font-semibold">
-            ${data.finalPrice.toFixed(2)}{" "}
-            <span className="text-gray-500 line-through">
-              ${Number(data?.price).toFixed(2)}
+
+        {/* Provider badges */}
+        {data.simType && (
+          <div className="flex gap-2 flex-wrap">
+            <span className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded font-medium">
+              Nhà mạng: {data.simType}
             </span>
-            <div className="absolute top-2.5 right-2 bg-red-600 text-sm text-white p-1 px-3 font-semibold rounded-sm">
-              -{data?.discount}%
-            </div>
           </div>
-        ) : (
-          <div className="font-semibold">${Number(data?.price).toFixed(2)}</div>
         )}
+
+        {/* Price Section */}
+        <div className="pt-2 border-t border-gray-100">
+          <div className="flex items-end justify-between">
+            <div>
+              {data.finalPrice && data.finalPrice > 0 ? (
+                <>
+                  <p className="text-2xl font-extrabold text-gray-900">
+                    {formatVND(data.finalPrice)}
+                  </p>
+                  <p className="text-sm text-gray-400 line-through mt-0.5">
+                    {formatVND(data.price)}
+                  </p>
+                </>
+              ) : (
+                <p className="text-2xl font-extrabold text-gray-900">
+                  {formatVND(data.price)}
+                </p>
+              )}
+            </div>
+            
+            {/* Cart Icon Button */}
+            <button
+              onClick={handleAddToCart}
+              className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+              aria-label="Thêm vào giỏ hàng"
+            >
+              <ShoppingCartIcon style={{ fontSize: "20px" }} />
+            </button>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <button
+          onClick={handleClick}
+          className="w-full py-3 px-4 border-2 border-orange-500 text-orange-500 font-semibold rounded-full hover:bg-orange-50 transition-all duration-200 text-sm"
+        >
+          Chi tiết sản phẩm
+        </button>
       </div>
     </div>
   );

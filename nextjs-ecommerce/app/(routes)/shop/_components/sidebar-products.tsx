@@ -8,7 +8,7 @@ const SidebarProducts = async () => {
 
   return (
     <div className="w-1/6 max-sm:w-full p-4 flex flex-col gap-y-1">
-      <p className="font-semibold mt-1">Category</p>
+      <p className="font-semibold mt-1">Danh mục</p>
       <SidebarItems category={category} />
       <PriceInput data={data} />
     </div>
