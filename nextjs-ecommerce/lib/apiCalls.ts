@@ -1,7 +1,15 @@
 import { Category, Product } from "@/types";
 import { db } from "./db";
 
+// Check if we're in build mode (no database available)
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+
 export async function getProduct(productId: string) {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return null;
+  }
+  
   try {
     const product = await db.product.findUnique({
       where: { id: productId },
@@ -14,6 +22,11 @@ export async function getProduct(productId: string) {
 }
 
 export async function getCategoryProducts(category: string) {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return [];
+  }
+  
   try {
     const products = await db.product.findMany({
       where: { category },
@@ -26,6 +39,11 @@ export async function getCategoryProducts(category: string) {
 }
 
 export const getCategories = async (): Promise<Category[]> => {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return [];
+  }
+  
   try {
     const categories = await db.category.findMany();
     return categories;
@@ -36,6 +54,11 @@ export const getCategories = async (): Promise<Category[]> => {
 };
 
 export const getCategory = async (category: string): Promise<Category[]> => {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return [];
+  }
+  
   try {
     const categories = await db.category.findMany({
       where: { id: category },
@@ -48,6 +71,11 @@ export const getCategory = async (category: string): Promise<Category[]> => {
 };
 
 export async function getAllProducts() {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return [];
+  }
+  
   try {
     const products = await db.product.findMany();
     return products;
@@ -58,6 +86,11 @@ export async function getAllProducts() {
 }
 
 export async function getFeaturedProducts() {
+  // Skip database calls during build time
+  if (isBuildTime) {
+    return [];
+  }
+  
   try {
     const products = await db.product.findMany({
       where: { featured: true },
