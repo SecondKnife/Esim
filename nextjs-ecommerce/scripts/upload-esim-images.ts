@@ -36,7 +36,8 @@ async function downloadImage(url: string): Promise<Buffer> {
 
 // Convert Buffer to File
 function bufferToFile(buffer: Buffer, filename: string): File {
-  const blob = new Blob([buffer], { type: 'image/jpeg' });
+  const uint8Array = new Uint8Array(buffer);
+  const blob = new Blob([uint8Array], { type: 'image/jpeg' });
   return new File([blob], filename, { type: 'image/jpeg' });
 }
 
