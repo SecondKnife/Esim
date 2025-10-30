@@ -39,14 +39,38 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const category = await db.category.findMany();
-    return NextResponse.json(category, {
+    console.log("📂 Fetching all categories...");
+    
+    // Check database connection
+    if (!db) {
+      console.error("❌ Database client not initialized");
+      return NextResponse.json(
+        { error: "Database connection failed" }, 
+        { status: 500 }
+      );
+    }
+
+    const categories = await db.category.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    console.log(`✅ Found ${categories.length} categories`);
+    return NextResponse.json(categories, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
     });
-  } catch (error) {
-    console.error("Error getting categories:", error);
-    return NextResponse.json({ error: "Error getting category.", status: 500 });
+  } catch (error: any) {
+    console.error("❌ Error getting categories:", error);
+    return NextResponse.json(
+      { 
+        error: "Error getting categories", 
+        message: error.message || "Unknown error",
+        details: process.env.NODE_ENV === "development" ? error.stack : undefined
+      }, 
+      { status: 500 }
+    );
   }
 }

@@ -44,11 +44,24 @@ Click **Deploy** button!
 
 ## ✅ Sau Khi Deploy Thành Công
 
-- [ ] Test homepage: `https://your-app.vercel.app/`
-- [ ] Test login: `https://your-app.vercel.app/login`
-- [ ] Test admin: `https://your-app.vercel.app/admin`
-- [ ] Kiểm tra images có load từ R2 không
-- [ ] Kiểm tra products có hiển thị không
+### 1. Health Check (QUAN TRỌNG!)
+```
+https://your-app.vercel.app/api/health
+```
+- [ ] Status: "healthy" ✅
+- [ ] Database connected: true ✅
+- [ ] Products count > 0 ✅
+
+### 2. Test Pages
+- [ ] Homepage: `https://your-app.vercel.app/`
+- [ ] Login: `https://your-app.vercel.app/login`
+- [ ] Shop: `https://your-app.vercel.app/shop`
+- [ ] Admin: `https://your-app.vercel.app/admin`
+
+### 3. Verify Data
+- [ ] Products hiển thị
+- [ ] Images load từ R2
+- [ ] Login hoạt động
 
 ## 🔧 Nếu Gặp Lỗi
 

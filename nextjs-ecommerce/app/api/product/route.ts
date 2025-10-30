@@ -74,9 +74,34 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const tasks = await db.product.findMany();
-    return NextResponse.json(tasks);
-  } catch (error) {
-    return NextResponse.json({ error: "Error getting products", status: 500 });
+    console.log("📦 Fetching all products...");
+    
+    // Check database connection
+    if (!db) {
+      console.error("❌ Database client not initialized");
+      return NextResponse.json(
+        { error: "Database connection failed" }, 
+        { status: 500 }
+      );
+    }
+
+    const products = await db.product.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    console.log(`✅ Found ${products.length} products`);
+    return NextResponse.json(products);
+  } catch (error: any) {
+    console.error("❌ Error getting products:", error);
+    return NextResponse.json(
+      { 
+        error: "Error getting products", 
+        message: error.message || "Unknown error",
+        details: process.env.NODE_ENV === "development" ? error.stack : undefined
+      }, 
+      { status: 500 }
+    );
   }
 }

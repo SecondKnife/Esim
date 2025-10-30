@@ -5,9 +5,19 @@ import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    console.log("🔐 Login API called");
+    
+    // Check database connection
+    if (!db) {
+      console.error("❌ Database client not initialized");
+      return NextResponse.json(
+        { error: "Database connection failed" },
+        { status: 500 }
+      );
+    }
 
-    console.log("🔐 Login attempt:", { email });
+    const { email, password } = await req.json();
+    console.log("📧 Login attempt for:", email);
 
     if (!email || !password) {
       return NextResponse.json(
@@ -16,6 +26,8 @@ export async function POST(req: Request) {
       );
     }
 
+    // Find user
+    console.log("🔍 Searching for user...");
     const user = await db.user.findUnique({
       where: { email },
     });
@@ -29,6 +41,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // Verify password
     console.log("🔑 Verifying password...");
     const isValid = await verifyPassword(password, user.password);
     console.log("✅ Password valid:", isValid);
@@ -40,11 +53,13 @@ export async function POST(req: Request) {
       );
     }
 
+    // Create session
+    console.log("🎫 Creating session...");
     const token = await createSession(user.id);
-    console.log("🎫 Session token created:", token.substring(0, 20) + "...");
+    console.log("✅ Session created:", token.substring(0, 20) + "...");
 
     // Set cookie
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -64,10 +79,15 @@ export async function POST(req: Request) {
         role: user.role,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Login error:", error);
+    console.error("❌ Error stack:", error.stack);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: "Internal server error",
+        message: error.message || "Unknown error",
+        details: process.env.NODE_ENV === "development" ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
