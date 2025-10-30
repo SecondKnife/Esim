@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import Footer from "@/components/footer";
 import Container from "@/components/ui/container";
 import HeroSection from "@/components/hero-section";
@@ -7,8 +7,12 @@ import CountryRegions from "@/components/country-regions";
 import StatsOverview from "@/components/stats-overview";
 import { getAllProducts, getCategories } from "@/lib/apiCalls";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Lazy load các components nặng
-const CarouselFeatured = dynamic(() => import("@/components/CarouselFeatured"), {
+const CarouselFeatured = dynamicImport(() => import("@/components/CarouselFeatured"), {
   loading: () => (
     <div className="py-12">
       <div className="animate-pulse space-y-4">
@@ -24,7 +28,7 @@ const CarouselFeatured = dynamic(() => import("@/components/CarouselFeatured"), 
   ssr: true,
 });
 
-const CarouselSpacing = dynamic(() => import("@/components/CarouselSpacing").then(mod => ({ default: mod.CarouselSpacing })), {
+const CarouselSpacing = dynamicImport(() => import("@/components/CarouselSpacing").then(mod => ({ default: mod.CarouselSpacing })), {
   loading: () => (
     <div className="py-8">
       <div className="animate-pulse space-y-4">
@@ -40,7 +44,7 @@ const CarouselSpacing = dynamic(() => import("@/components/CarouselSpacing").the
   ssr: true,
 });
 
-const TitleHeader = dynamic(() => import("@/components/title-header"), {
+const TitleHeader = dynamicImport(() => import("@/components/title-header"), {
   loading: () => <div className="h-16 bg-gray-100"></div>,
   ssr: true,
 });

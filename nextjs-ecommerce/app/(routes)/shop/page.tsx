@@ -4,6 +4,10 @@ import { getAllProducts } from "@/lib/apiCalls";
 import filteredData from "@/app/utils/filteredData";
 import { Product } from "@/types";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: "Shop | eSIM Store",
   description: `Shop for eSIM and SIM cards, international travel connectivity`,

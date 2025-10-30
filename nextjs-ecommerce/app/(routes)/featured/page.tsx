@@ -5,6 +5,10 @@ import filteredData from "@/app/utils/filteredData";
 import { Product } from "@/types";
 import ProductCard from "@/components/ui/product-card";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: "Featured | eSIM Store",
   description: `Featured eSIM and SIM cards with best deals and discounts`,

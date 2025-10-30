@@ -5,6 +5,10 @@ import { getCategoryProducts } from "@/lib/apiCalls";
 import { Product } from "@/types";
 import { type Metadata } from "next";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata({
   params,
 }: {

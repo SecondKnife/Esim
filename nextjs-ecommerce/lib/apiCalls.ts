@@ -8,7 +8,8 @@ export async function getProduct(productId: string) {
     });
     return product;
   } catch (error) {
-    throw new Error("Error getting product");
+    console.error("Error getting product:", error);
+    return null; // Return null instead of throwing during build
   }
 }
 
@@ -19,7 +20,8 @@ export async function getCategoryProducts(category: string) {
     });
     return products;
   } catch (error) {
-    throw new Error("Error getting category products");
+    console.error("Error getting category products:", error);
+    return []; // Return empty array instead of throwing during build
   }
 }
 
@@ -28,7 +30,8 @@ export const getCategories = async (): Promise<Category[]> => {
     const categories = await db.category.findMany();
     return categories;
   } catch (error) {
-    throw new Error("Error getting categories");
+    console.error("Error getting categories:", error);
+    return []; // Return empty array instead of throwing during build
   }
 };
 
@@ -39,7 +42,8 @@ export const getCategory = async (category: string): Promise<Category[]> => {
     });
     return categories;
   } catch (error) {
-    throw new Error("Error getting category");
+    console.error("Error getting category:", error);
+    return []; // Return empty array instead of throwing during build
   }
 };
 
@@ -48,7 +52,8 @@ export async function getAllProducts() {
     const products = await db.product.findMany();
     return products;
   } catch (error) {
-    throw new Error("Error getting products");
+    console.error("Error getting products:", error);
+    return []; // Return empty array instead of throwing during build
   }
 }
 
@@ -59,6 +64,7 @@ export async function getFeaturedProducts() {
     });
     return products;
   } catch (error) {
-    throw new Error("Error getting featured products");
+    console.error("Error getting featured products:", error);
+    return []; // Return empty array instead of throwing during build
   }
 }
