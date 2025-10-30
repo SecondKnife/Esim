@@ -2,35 +2,54 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get("session")?.value;
-
-  // Allow public routes
-  const publicPaths = ["/login", "/signup", "/api/auth", "/", "/shop", "/featured", "/product", "/cart"];
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(path)
-  );
-
-  if (isPublicPath) {
-    return NextResponse.next();
-  }
-
-  // Check authentication for protected routes (admin)
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (!token) {
-      const url = new URL("/login", request.url);
-      url.searchParams.set("redirect", request.nextUrl.pathname);
-      return NextResponse.redirect(url);
+  try {
+    const { pathname } = request.nextUrl;
+    
+    // Skip middleware for static files, images, and Next.js internals
+    if (
+      pathname.startsWith('/_next') ||
+      pathname.startsWith('/api/') ||
+      pathname.includes('.') // Skip files with extensions (images, fonts, etc.)
+    ) {
+      return NextResponse.next();
     }
 
-    // Token exists, allow access
-    // Full verification will be done in API routes and server components
-    // This middleware just checks for token presence
+    const token = request.cookies.get("session")?.value;
+
+    // Public routes that don't require authentication
+    const publicPaths = ["/", "/login", "/signup", "/shop", "/featured", "/product", "/cart", "/unauthorized"];
+    const isPublicPath = publicPaths.some((path) =>
+      pathname === path || pathname.startsWith(path + "/")
+    );
+
+    if (isPublicPath) {
+      return NextResponse.next();
+    }
+
+    // Check authentication for protected routes (admin)
+    if (pathname.startsWith("/admin")) {
+      if (!token) {
+        const url = new URL("/login", request.url);
+        url.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(url);
+      }
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Middleware error:", error);
     return NextResponse.next();
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };
