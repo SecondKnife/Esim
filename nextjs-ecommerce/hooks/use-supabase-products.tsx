@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase-client';
-import { subscribeToProducts, unsubscribeFromChannel } from '@/lib/supabase-helpers';
 
 export interface SupabaseProduct {
   id: string;
@@ -25,7 +23,8 @@ export interface SupabaseProduct {
 }
 
 /**
- * Hook để fetch và realtime updates cho products từ Supabase
+ * Hook client-side để fetch danh sách products từ API `/api/product`
+ * (Không còn phụ thuộc Supabase phía client, tránh lỗi policy/RLS)
  */
 export function useSupabaseProducts() {
   const [products, setProducts] = useState<SupabaseProduct[]>([]);
@@ -33,24 +32,20 @@ export function useSupabaseProducts() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch initial data
+    // Fetch initial data từ API
     async function fetchProducts() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('Product')
-          .select('*')
-          .order('createdAt', { ascending: false });
-
-        if (error) {
-          console.error('Error fetching products:', error);
-          setError(error.message);
-        } else {
-          setProducts(data || []);
-          setError(null);
+        const res = await fetch('/api/product', { cache: 'no-store' });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`GET /api/product ${res.status}: ${text}`);
         }
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
+        setError(null);
       } catch (err: any) {
-        console.error('Error:', err);
+        console.error('Error fetching products:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -58,28 +53,6 @@ export function useSupabaseProducts() {
     }
 
     fetchProducts();
-
-    // Subscribe to realtime changes
-    const subscription = subscribeToProducts((payload) => {
-      console.log('Product changed:', payload);
-
-      if (payload.eventType === 'INSERT') {
-        setProducts((prev) => [payload.new, ...prev]);
-      } else if (payload.eventType === 'UPDATE') {
-        setProducts((prev) =>
-          prev.map((p) => (p.id === payload.new.id ? payload.new : p))
-        );
-      } else if (payload.eventType === 'DELETE') {
-        setProducts((prev) => prev.filter((p) => p.id !== payload.old.id));
-      }
-    });
-
-    // Cleanup
-    return () => {
-      if (subscription) {
-        unsubscribeFromChannel(subscription);
-      }
-    };
   }, []);
 
   return { products, loading, error };
@@ -97,21 +70,17 @@ export function useSupabaseFeaturedProducts() {
     async function fetchFeaturedProducts() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('Product')
-          .select('*')
-          .eq('featured', true)
-          .order('createdAt', { ascending: false });
-
-        if (error) {
-          console.error('Error fetching featured products:', error);
-          setError(error.message);
-        } else {
-          setProducts(data || []);
-          setError(null);
+        const res = await fetch('/api/product', { cache: 'no-store' });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`GET /api/product ${res.status}: ${text}`);
         }
+        const data = await res.json();
+        const featured = (Array.isArray(data) ? data : []).filter((p: any) => p.featured);
+        setProducts(featured);
+        setError(null);
       } catch (err: any) {
-        console.error('Error:', err);
+        console.error('Error fetching featured products:', err);
         setError(err.message);
       } finally {
         setLoading(false);
