@@ -9,16 +9,16 @@ import https from 'https';
 
 const prisma = new PrismaClient();
 
-// Unsplash images cho categories
-const CATEGORY_IMAGES: { [key: string]: string } = {
-  'billboard_thailand': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80',
-  'billboard_singapore': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
-  'billboard_usa': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800&q=80',
-  'billboard_japan': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80',
-  'billboard_europe': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80',
-  'billboard_korea': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&q=80',
-  'billboard_australia': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800&q=80',
-  'billboard_asia': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800&q=80',
+// Unsplash images cho categories (fallback); sẽ upload lên R2 rồi map vào Billboard
+const CATEGORY_IMAGES: { [billboardId: string]: { url: string; label: string; categoryKey: string } } = {
+  'billboard_thailand': { url: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80', label: 'Thailand', categoryKey: 'Thailand' },
+  'billboard_singapore': { url: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80', label: 'Singapore', categoryKey: 'Singapore' },
+  'billboard_usa': { url: 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800&q=80', label: 'USA', categoryKey: 'USA' },
+  'billboard_japan': { url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80', label: 'Japan', categoryKey: 'Japan' },
+  'billboard_europe': { url: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80', label: 'Europe', categoryKey: 'Europe' },
+  'billboard_korea': { url: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&q=80', label: 'Korea', categoryKey: 'Korea' },
+  'billboard_australia': { url: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800&q=80', label: 'Australia', categoryKey: 'Australia' },
+  'billboard_asia': { url: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800&q=80', label: 'Asia', categoryKey: 'Asia' },
 };
 
 // Download image từ URL
@@ -43,10 +43,10 @@ function bufferToFile(buffer: Buffer, filename: string): File {
 async function uploadCategoryImages() {
   console.log('🚀 Bắt đầu upload ảnh categories lên R2...\n');
 
-  for (const [billboardId, imageUrl] of Object.entries(CATEGORY_IMAGES)) {
+  for (const [billboardId, meta] of Object.entries(CATEGORY_IMAGES)) {
     try {
       console.log(`📥 Downloading ảnh cho ${billboardId}...`);
-      const buffer = await downloadImage(imageUrl);
+      const buffer = await downloadImage(meta.url);
 
       const filename = `${billboardId.replace('billboard_', '')}.jpg`;
       console.log(`☁️  Uploading ${filename} lên R2...`);
@@ -54,10 +54,17 @@ async function uploadCategoryImages() {
       const file = bufferToFile(buffer, filename);
       const r2Url = await uploadToR2(file, 'categories');
 
-      // Update billboard trong database
-      await prisma.billboard.update({
+      // Upsert billboard trong database
+      const billboard = await prisma.billboard.upsert({
         where: { id: billboardId },
-        data: { imageURL: r2Url },
+        update: { billboard: meta.label, imageURL: r2Url },
+        create: { id: billboardId, billboard: meta.label, imageURL: r2Url },
+      });
+
+      // Gán billboardId cho category tương ứng (nếu tồn tại)
+      await prisma.category.updateMany({
+        where: { category: meta.categoryKey },
+        data: { billboard: meta.label, billboardId: billboard.id },
       });
 
       console.log(`✅ Upload thành công: ${r2Url}\n`);
@@ -70,7 +77,7 @@ async function uploadCategoryImages() {
   }
 
   console.log('\n🎉 Hoàn thành upload tất cả ảnh categories!');
-  console.log('\n📝 Billboards đã được update với R2 URLs trong database');
+  console.log('\n📝 Billboards và Category.billboardId đã được đồng bộ với R2 URLs trong database');
   console.log('Refresh trang để xem ảnh mới!');
 }
 

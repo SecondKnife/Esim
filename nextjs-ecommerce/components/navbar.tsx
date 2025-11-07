@@ -1,6 +1,7 @@
 import Container from "./ui/container";
 import Logo from "./Logo";
 import NavbarActions from "./navbar-actions";
+import dynamicImport from 'next/dynamic';
 import { Button } from "./ui/button";
 import NavbarSearch from "./navbar-search";
 import MobileSidebar from "@/app/(admin)/_components/mobile-sidebar";
@@ -11,6 +12,9 @@ import { getCurrentUser } from "@/lib/get-current-user";
 const NavBar = async () => {
   // Get current user
   const user = await getCurrentUser();
+
+  // Theme toggle is client-only
+  const ThemeToggle = dynamicImport(() => import('./theme-toggle'), { ssr: false });
 
   return (
     <div className="border-b bg-white shadow-sm sticky top-0 z-50">
@@ -28,6 +32,9 @@ const NavBar = async () => {
             <NavbarSearch />
           </div>
           <div className="flex items-center gap-3">
+            {/* Dark/Light toggle */}
+            {/* @ts-expect-error Async server component boundary for client import */}
+            <ThemeToggle />
             <NavbarActions />
             {user ? (
               <div className="flex items-center gap-3">

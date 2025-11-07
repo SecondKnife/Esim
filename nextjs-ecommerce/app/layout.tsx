@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 
 const montserrat = Montserrat({ 
@@ -31,8 +32,10 @@ export default function RootLayout({
     <ReactQueryProvider>
       <html lang="vi">
         <body className={montserrat.className}>
-          <ToastProvider />
-          {children}
+          <ThemeProvider>
+            <ToastProvider />
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ReactQueryProvider>

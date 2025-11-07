@@ -6,6 +6,7 @@ import FeatureHighlights from "@/components/feature-highlights";
 import CountryRegions from "@/components/country-regions";
 import StatsOverview from "@/components/stats-overview";
 import { getAllProducts, getCategories } from "@/lib/apiCalls";
+import ProductCard from "@/components/ui/product-card";
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -74,6 +75,14 @@ const HomePage = async () => {
       <Container>
         <TitleHeader title="Top Category" url="/shop" />
         <CarouselSpacing data={category} />
+        {/* Thêm sản phẩm hiển thị ngay dưới Top Category */}
+        {products.length > 0 && (
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} data={product as any} />
+            ))}
+          </div>
+        )}
       </Container>
 
       {/* Country Regions */}
