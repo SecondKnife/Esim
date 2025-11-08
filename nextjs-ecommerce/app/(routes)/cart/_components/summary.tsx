@@ -37,39 +37,27 @@ const Summary = () => {
   const onCheckout = async () => {
     setLoading(true);
     
-    // Check if user is logged in
-    try {
-      const response = await axios.get("/api/auth/me");
-      if (!response.data.user) {
-        setLoading(false);
-        return router.push("/login");
-      }
-    } catch {
-      setLoading(false);
-      return router.push("/login");
-    }
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/checkout`,
-      {
-        items,
-      }
-    );
+    // Redirect to checkout page
+    router.push("/checkout");
     setLoading(false);
-    window.location = response.data.url;
   };
 
   return (
-    <div className="mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
-      <h2 className="text-lg font-medium text-gray-900">Tổng quan đơn hàng</h2>
+    <div className="mt-16 rounded-lg bg-card border border-border px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
+      <h2 className="text-lg font-medium text-foreground">Tổng quan đơn hàng</h2>
       <div className="mt-6 space-y-4">
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="text-base font-medium text-gray-900">Tổng cộng</div>
-          <p className="text-lg text-gray-900 font-semibold">
+        <div className="flex items-center justify-between border-t border-border pt-4">
+          <div className="text-base font-medium text-foreground">Tổng cộng</div>
+          <p className="text-lg text-foreground font-semibold">
             {formatVND(totalPrice)}
           </p>
         </div>
       </div>
-      <Button disabled={loading} onClick={onCheckout} className="w-full mt-6">
+      <Button 
+        disabled={loading} 
+        onClick={onCheckout} 
+        className="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white"
+      >
         {loading ? <LoadingDots /> : "Thanh toán"}
       </Button>
     </div>

@@ -15,6 +15,14 @@ type CarouselFeaturedProps = {
 };
 
 const CarouselFeatured = ({ data }: CarouselFeaturedProps) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="py-8 text-center text-muted-foreground">
+        <p>Chưa có sản phẩm nổi bật</p>
+      </div>
+    );
+  }
+
   return (
     <Carousel
       opts={{

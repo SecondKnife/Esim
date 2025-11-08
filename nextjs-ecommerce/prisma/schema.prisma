@@ -109,15 +109,29 @@ model OrderItem {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  orderItems OrderItem[]
-  isPaid     Boolean     @default(false)
-  phone      String      @default("")
-  address    String      @default("")
-  userId     String?
-  user       User?       @relation(fields: [userId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id              String      @id @default(cuid())
+  orderItems      OrderItem[]
+  isPaid          Boolean     @default(false)
+  phone           String      @default("")
+  address         String      @default("")
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  
+  // Customer information
+  customerName    String      @default("")
+  customerEmail   String      @default("")
+  customerPhone   String      @default("")
+  deliveryAddress String      @default("")
+  
+  // Payment information
+  paymentMethod   String      @default("") // "bank_transfer", "visa", "cod"
+  status          String      @default("pending_payment") // "pending_payment", "paid", "shipping", "delivered", "cancelled"
+  
+  // Bank transfer information
+  bankTransferInfo String?    // JSON string for bank account details
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model User {

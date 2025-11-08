@@ -34,11 +34,11 @@ const SortItems = () => {
 
   return (
     <div className="flex items-center mb-4">
-      <div className="flex-grow h-0.5 bg-neutral-800 ml-1 mr-5"></div>
+      <div className="flex-grow h-0.5 bg-border ml-1 mr-5"></div>
       <div className="flex items-center">
-        <p className="font-semibold text-sm">Sắp xếp theo</p>
+        <p className="font-semibold text-sm text-foreground">Sắp xếp theo</p>
         <select
-          className="ml-2 border border-neutral-800 p-1 text-sm"
+          className="ml-2 border border-border bg-background text-foreground p-1.5 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
           name="sorting"
           id=""
           value={selectedSort}

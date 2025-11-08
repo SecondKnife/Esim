@@ -24,8 +24,8 @@ const FeatureHighlight = ({ icon, title, description, delay = 0 }: FeatureProps)
       }`}
     >
       <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="font-bold text-xl mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
+      <h3 className="font-bold text-xl mb-2 text-foreground">{title}</h3>
+      <p className="text-muted-foreground text-sm">{description}</p>
     </div>
   );
 };
@@ -39,14 +39,14 @@ const FeatureHighlights = () => {
 
   if (!mounted) {
     return (
-      <div className="py-12 bg-gray-50">
+      <div className="py-12 bg-background">
         <div className="container mx-auto px-4">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-300 w-1/3 mx-auto rounded"></div>
-            <div className="h-4 bg-gray-200 w-1/2 mx-auto rounded"></div>
+            <div className="h-8 bg-muted w-1/3 mx-auto rounded"></div>
+            <div className="h-4 bg-muted w-1/2 mx-auto rounded"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-48 bg-gray-200 rounded"></div>
+                <div key={i} className="h-48 bg-muted rounded"></div>
               ))}
             </div>
           </div>
@@ -63,13 +63,13 @@ const FeatureHighlights = () => {
   ];
 
   return (
-    <section className="py-12 bg-gradient-to-b from-white to-gray-50" data-section="features">
+    <section className="py-12 bg-gradient-to-b from-background to-muted/30" data-section="features">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
             Tại sao chọn eSIM STORE?
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Giải pháp SIM du lịch hiện đại, tiện lợi và tiết kiệm cho mọi chuyến đi của bạn
           </p>
         </div>

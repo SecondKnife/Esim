@@ -17,13 +17,13 @@ const CountryRegions = () => {
 
   if (!mounted) {
     return (
-      <div className="py-12 bg-white">
+      <div className="py-12 bg-background">
         <div className="container mx-auto px-4">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-300 w-1/3 rounded"></div>
+            <div className="h-8 bg-muted w-1/3 rounded"></div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded"></div>
+                <div key={i} className="h-32 bg-muted rounded"></div>
               ))}
             </div>
           </div>
@@ -72,13 +72,13 @@ const CountryRegions = () => {
   ];
 
   return (
-    <section className="py-16 bg-white" data-section="regions">
+    <section className="py-16 bg-background" data-section="regions">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
             Bạn đi đâu tiếp theo?
           </h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Hãy chọn điểm đến để tìm gói cước phù hợp
           </p>
         </div>
@@ -87,9 +87,9 @@ const CountryRegions = () => {
           {regions.map((region, idx) => (
             <div
               key={idx}
-              className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+              className="border border-border bg-card rounded-lg p-6 hover:shadow-lg transition-shadow"
             >
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              <h3 className="text-xl font-semibold mb-4 text-card-foreground">
                 {region.title}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -97,7 +97,7 @@ const CountryRegions = () => {
                   <Link
                     key={i}
                     href={country.href}
-                    className="px-4 py-2 bg-gray-100 hover:bg-blue-500 hover:text-white rounded-full text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground rounded-full text-sm font-medium transition-colors"
                   >
                     {country.name}
                   </Link>

@@ -21,14 +21,14 @@ const CartPage = () => {
   }
 
   return (
-    <div className="bg-white ">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-7xl min-h-screen">
         <div className="px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-black">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold text-foreground">Giỏ hàng</h1>
           {cart.items.length === 0 && (
             <div className="flex flex-col items-center justify-center py-40">
-              <ShoppingCartIcon style={{ fontSize: "10rem" }} />
-              <p className="text-neutral-500">Your cart is empty.</p>
+              <ShoppingCartIcon style={{ fontSize: "10rem", color: "currentColor" }} className="text-muted-foreground" />
+              <p className="text-muted-foreground mt-4">Giỏ hàng của bạn đang trống.</p>
             </div>
           )}
           <div className="lg:grid lg:grid-cols-12 lg:items-start gap-x-12">

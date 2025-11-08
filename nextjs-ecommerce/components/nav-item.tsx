@@ -1,26 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const NavItem = () => {
   const pathname = usePathname();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const response = await axios.get("/api/auth/me");
-        if (response.data.user && response.data.user.role === "ADMIN") {
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        setIsAdmin(false);
-      }
-    };
-    checkAdmin();
-  }, []);
+  const { user } = useCurrentUser();
+  const isAdmin = user?.role === "ADMIN";
 
   const routes = [
     {

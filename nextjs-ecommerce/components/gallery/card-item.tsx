@@ -36,8 +36,8 @@ const CardItem = ({ billboard, category }: CardProps) => {
   const imageUrl = billboards.imageURL || ""
 
   return (
-    <Card>
-      <CardContent className="flex aspect-square justify-center relative ">
+    <Card className="border-border bg-card">
+      <CardContent className="flex aspect-square justify-center relative p-0">
         <Image
           src={imageUrl}
           style={{
@@ -48,12 +48,13 @@ const CardItem = ({ billboard, category }: CardProps) => {
           fill
           alt={`${category} eSIM/SIM`}
           sizes="any"
+          className="object-cover"
         />
         <div className="absolute left-8 bottom-8 flex gap-2 flex-col w-24">
           <p className="text-white font-bold text-2xl drop-shadow-lg">
             {category}
           </p>
-          <Button className="bg-white text-black hover:bg-gray-100">Shop</Button>
+          <Button className="bg-background text-foreground hover:bg-muted border-border">Shop</Button>
         </div>
       </CardContent>
     </Card>

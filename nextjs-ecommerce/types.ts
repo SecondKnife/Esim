@@ -49,4 +49,10 @@ export interface RequestData {
   sizes: SelectedSize[];
   categoryId: string;
   discount?: number;
+  // eSIM/SIM specific fields
+  country?: string | null;
+  region?: string | null;
+  dataPlan?: string | null;
+  validityDays?: number | null;
+  simType?: string | null;
 }

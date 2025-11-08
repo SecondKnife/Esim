@@ -11,7 +11,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
   const baseUrl = "https://kemal-web-storage.s3.eu-north-1.amazonaws.com";
 
   return (
-    <Tab className="relative flex aspect-square cursor-pointer items-center justify-center rounded-md bg-white">
+    <Tab className="relative flex aspect-square cursor-pointer items-center justify-center rounded-md bg-card border border-border">
       {({ selected }) => (
         <div>
           <span className="absolute h-full w-full aspect-square inset-0 overflow-hidden rounded-md">
@@ -25,8 +25,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
           </span>
           <span
             className={cn(
-              "absolute inset-0 rounded-md ring-2 ring-offset-2",
-              selected ? "ring-black" : "ring-transparent"
+              "absolute inset-0 rounded-md ring-2 ring-offset-2 ring-offset-background",
+              selected ? "ring-primary" : "ring-transparent"
             )}
           />
         </div>

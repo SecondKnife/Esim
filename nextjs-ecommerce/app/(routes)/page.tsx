@@ -17,10 +17,10 @@ const CarouselFeatured = dynamicImport(() => import("@/components/CarouselFeatur
   loading: () => (
     <div className="py-12">
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-gray-300 w-1/3 mx-auto rounded"></div>
+        <div className="h-8 bg-muted w-1/3 mx-auto rounded"></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-64 bg-gray-200 rounded"></div>
+            <div key={i} className="h-64 bg-muted rounded"></div>
           ))}
         </div>
       </div>
@@ -33,10 +33,10 @@ const CarouselSpacing = dynamicImport(() => import("@/components/CarouselSpacing
   loading: () => (
     <div className="py-8">
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-gray-300 w-1/3 mx-auto rounded"></div>
+        <div className="h-8 bg-muted w-1/3 mx-auto rounded"></div>
         <div className="flex gap-4 overflow-x-auto">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 w-32 bg-gray-200 rounded flex-shrink-0"></div>
+            <div key={i} className="h-32 w-32 bg-muted rounded flex-shrink-0"></div>
           ))}
         </div>
       </div>
@@ -46,69 +46,100 @@ const CarouselSpacing = dynamicImport(() => import("@/components/CarouselSpacing
 });
 
 const TitleHeader = dynamicImport(() => import("@/components/title-header"), {
-  loading: () => <div className="h-16 bg-gray-100"></div>,
+  loading: () => <div className="h-16 bg-muted"></div>,
   ssr: true,
 });
 
 const HomePage = async () => {
-  const category = await getCategories();
-  const products = await getAllProducts();
+  try {
+    const category = await getCategories();
+    const products = await getAllProducts();
 
-  const featuredProducts = products.filter(
-    (product) => product.featured
-  );
+    const featuredProducts = products.filter(
+      (product) => product.featured
+    );
 
-  return (
-    <>
-      {/* Hero Section - Full Width Banner */}
-      <HeroSection />
+    return (
+      <>
+        {/* Hero Section - Full Width Banner */}
+        <HeroSection />
 
-      {/* Feature Highlights */}
-      <FeatureHighlights />
+        {/* Feature Highlights */}
+        <FeatureHighlights />
 
-      {/* Stats Overview */}
-      <Container>
-        <StatsOverview />
-      </Container>
+        {/* Stats Overview */}
+        <Container>
+          <StatsOverview />
+        </Container>
 
-      {/* Top Categories - Lazy Loaded */}
-      <Container>
-        <TitleHeader title="Top Category" url="/shop" />
-        <CarouselSpacing data={category} />
-        {/* Thêm sản phẩm hiển thị ngay dưới Top Category */}
-        {products.length > 0 && (
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.slice(0, 8).map((product) => (
-              <ProductCard key={product.id} data={product as any} />
-            ))}
+        {/* Top Categories - Lazy Loaded */}
+        <Container>
+          <TitleHeader title="Top Category" url="/shop" />
+          {category && category.length > 0 ? (
+            <CarouselSpacing data={category} />
+          ) : (
+            <div className="py-8 text-center text-muted-foreground">
+              <p>Đang tải danh mục...</p>
+            </div>
+          )}
+          {/* Thêm sản phẩm hiển thị ngay dưới Top Category */}
+          {products && products.length > 0 ? (
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {products.slice(0, 8).map((product) => (
+                <ProductCard key={product.id} data={product as any} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-8 py-12 text-center text-muted-foreground">
+              <p>Chưa có sản phẩm nào</p>
+            </div>
+          )}
+        </Container>
+
+        {/* Country Regions */}
+        <CountryRegions />
+
+        {/* Featured Products - Lazy Loaded */}
+        <div className="mb-24">
+          <TitleHeader title="Featured Products" url="/featured" />
+          {featuredProducts && featuredProducts.length > 0 ? (
+            <CarouselFeatured
+              data={featuredProducts.map((product) => {
+                const { discount, finalPrice, ...rest } = product;
+                return {
+                  ...rest,
+                  price: product.price,
+                  finalPrice: finalPrice ?? 0,
+                  ...(typeof discount !== "undefined" && discount !== null ? { discount } : {}),
+                };
+              })}
+            />
+          ) : (
+            <Container>
+              <div className="py-12 text-center text-muted-foreground">
+                <p>Chưa có sản phẩm nổi bật</p>
+              </div>
+            </Container>
+          )}
+        </div>
+
+        <Footer />
+      </>
+    );
+  } catch (error) {
+    console.error("Error loading home page:", error);
+    return (
+      <>
+        <HeroSection />
+        <Container>
+          <div className="py-12 text-center">
+            <p className="text-red-500">Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.</p>
           </div>
-        )}
-      </Container>
-
-      {/* Country Regions */}
-      <CountryRegions />
-
-      {/* Featured Products - Lazy Loaded */}
-      <div className="mb-24">
-        <TitleHeader title="Featured Products" url="/featured" />
-        {featuredProducts.length > 0 && (
-          <CarouselFeatured
-            data={featuredProducts.map((product) => {
-              const { discount, finalPrice, ...rest } = product;
-              return {
-                ...rest,
-                price: product.price,
-                finalPrice: finalPrice ?? 0,
-                ...(typeof discount !== "undefined" && discount !== null ? { discount } : {}),
-              };
-            })}
-          />
-        )}
-      </div>
-
-      <Footer />
-    </>
-  );
+        </Container>
+        <Footer />
+      </>
+    );
+  }
 };
 
 export default HomePage;

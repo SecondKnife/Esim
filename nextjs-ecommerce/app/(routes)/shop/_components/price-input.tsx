@@ -37,59 +37,30 @@ const PriceInput = ({ data }: PriceInputProps) => {
   );
 
   useEffect(() => {
-    const fetchProductPrice = async () => {
-      if (pathName.startsWith("/shop/") && pathName !== "/shop") {
-        try {
-          const urlString = pathName.substring("/shop/".length);
-          const response = await axios.get(`/api/product/category/${urlString}`);
-          const categoryData = response.data;
-          const prices = categoryData?.map((product: Product) => {
-            if (product.finalPrice && product.finalPrice > 0) {
-              return product.finalPrice;
-            } else {
-              return product.price;
-            }
-          });
-          setMaxPrice(Math.max(...prices));
-          setMinPrice(Math.min(...prices));
-          setValue(Math.max(...prices));
-        } catch (error) {
-          console.error("Error fetching category products:", error);
-          // Fallback to using data prop
-          const prices = data?.map((product: Product) => {
-            if (product.finalPrice && product.finalPrice > 0) {
-              return product.finalPrice;
-            } else {
-              return +product.price;
-            }
-          });
-          setMaxPrice(Math.max(...prices));
-          setMinPrice(Math.min(...prices));
-          setValue(Math.max(...prices));
-        }
+    // Use data from props instead of fetching again
+    if (!data || data.length === 0) return;
+    
+    const prices = data.map((product: Product) => {
+      if (product.finalPrice && product.finalPrice > 0) {
+        return product.finalPrice;
       } else {
-        const prices = data?.map((product: Product) => {
-          if (product.finalPrice && product.finalPrice > 0) {
-            return product.finalPrice;
-          } else {
-            return +product.price;
-          }
-        });
-        setMaxPrice(Math.max(...prices));
-        setMinPrice(Math.min(...prices));
-        setValue(Math.max(...prices));
+        return +product.price;
       }
-    };
+    });
 
-    fetchProductPrice();
+    if (prices.length > 0) {
+      setMaxPrice(Math.max(...prices));
+      setMinPrice(Math.min(...prices));
+      setValue(Math.max(...prices));
+    }
   }, [pathName, data]);
 
   return (
     <div className="range-container mt-2">
       <div className="range-label flex justify-between">
         <div className="flex flex-col gap-y-1">
-          <p className="font-semibold">Giá tiền</p>
-          <span className="font-serif">{formatVND(value || 0)}</span>
+          <p className="font-semibold text-foreground">Giá tiền</p>
+          <span className="font-serif text-foreground">{formatVND(value || 0)}</span>
         </div>
       </div>
       <input
@@ -102,7 +73,7 @@ const PriceInput = ({ data }: PriceInputProps) => {
           handleSortChange(e.target.value);
           setValue(parseFloat(e.target.value));
         }}
-        className=" accent-neutral-800 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+        className="accent-orange-500 w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
       />
     </div>
   );

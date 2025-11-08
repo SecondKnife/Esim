@@ -73,21 +73,37 @@ const TableCategories = () => {
         description="Manage categories for your store"
         url="/admin/categories/new"
       />
-      <TableContainer component={Paper}>
+      <TableContainer 
+        component={Paper}
+        className="bg-white dark:bg-gray-800"
+        sx={{
+          '& .MuiTableCell-root': {
+            borderColor: 'rgba(224, 224, 224, 1)',
+            color: 'inherit',
+          },
+          '& .MuiTableHead-root .MuiTableCell-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            fontWeight: 600,
+          },
+          '& .dark .MuiTableHead-root .MuiTableCell-root': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          },
+        }}
+      >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>
-                <p className="text-gray-700">Name</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Name</p>
               </TableCell>
               <TableCell>
-                <p className="text-gray-700">Billboard</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Billboard</p>
               </TableCell>
               <TableCell align="center">
-                <p className="text-gray-700">Date</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Date</p>
               </TableCell>
               <TableCell align="center">
-                <p className="text-gray-700">Actions</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Actions</p>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -95,26 +111,37 @@ const TableCategories = () => {
             {currentProducts?.map((category) => (
               <TableRow
                 key={category.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                sx={{ 
+                  "&:last-child td, &:last-child th": { border: 0 },
+                  "&:hover": {
+                    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                  },
+                  "& .dark &:hover": {
+                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  },
+                }}
               >
-                <TableCell component="th" scope="row">
-                  {category.category}
+                <TableCell component="th" scope="row" sx={{ color: 'inherit !important' }}>
+                  <p className="text-gray-900 dark:text-gray-100 font-medium">{category.category}</p>
                 </TableCell>
-                <TableCell align="left">{category.billboard}</TableCell>
-                <TableCell align="center">
-                  {formatDate(category.createdAt)}
+                <TableCell align="left" sx={{ color: 'inherit !important' }}>
+                  <p className="text-gray-900 dark:text-gray-100">{category.billboard}</p>
                 </TableCell>
-
-                <TableCell align="center">
-                  <button>
-                    <DeleteIcon
-                      className="text-red-600"
-                      onClick={() => deleteTask(category.id)}
-                    />
-                  </button>
-                  <Link href={`/admin/categories/edit/${category.id}`}>
-                    <EditIcon />
-                  </Link>
+                <TableCell align="center" sx={{ color: 'inherit !important' }}>
+                  <p className="text-gray-900 dark:text-gray-100">{formatDate(category.createdAt)}</p>
+                </TableCell>
+                <TableCell align="center" sx={{ color: 'inherit !important' }}>
+                  <div className="flex items-center gap-2 justify-center">
+                    <button>
+                      <DeleteIcon
+                        className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 cursor-pointer"
+                        onClick={() => deleteTask(category.id)}
+                      />
+                    </button>
+                    <Link href={`/admin/categories/edit/${category.id}`}>
+                      <EditIcon className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer" />
+                    </Link>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -131,8 +158,8 @@ const TableCategories = () => {
           pageRangeDisplayed={5}
           onPageChange={handlePageClick}
           containerClassName={"pagination flex space-x-2 justify-end mt-4"}
-          previousLinkClassName={"bg-neutral-800 px-4 py-2 rounded text-white"}
-          nextLinkClassName={"bg-neutral-800 px-4 py-2 rounded text-white"}
+          previousLinkClassName={"bg-gray-800 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded text-white transition-colors"}
+          nextLinkClassName={"bg-gray-800 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded text-white transition-colors"}
           disabledClassName={"opacity-50 cursor-not-allowed"}
           activeClassName={"bg-blue-700"}
           pageClassName="hidden"

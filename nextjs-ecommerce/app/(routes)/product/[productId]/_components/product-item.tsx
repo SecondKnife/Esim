@@ -60,7 +60,7 @@ const ProductItem = () => {
   }
 
   if (!productQuery.data || !relatedQuery.data) {
-    return <Container>Something went wrong!</Container>;
+    return <Container><p className="text-foreground">Something went wrong!</p></Container>;
   }
 
   const filteredData: Product[] = relatedQuery?.data?.filter(
@@ -68,10 +68,10 @@ const ProductItem = () => {
   );
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       <Container>
         <div className="px-4 py-10 sm:px-6 lg:px-16">
-          <Link href="/shop" className="flex items-center mb-5 gap-x-1">
+          <Link href="/shop" className="flex items-center mb-5 gap-x-1 text-foreground hover:text-primary transition-colors">
             <ArrowBackIcon style={{ width: "20px", height: "20px" }} />
             <p className="text-md font-semibold">Back to shop</p>
           </Link>
@@ -86,12 +86,12 @@ const ProductItem = () => {
             </div>
           </div>
 
-          <hr className="my-10" />
+          <hr className="my-10 border-border" />
           <div className="space-y-4">
            {
-            filteredData.length > 0 && <h3 className="font-semibold text-3xl">Recommended</h3>
+            filteredData.length > 0 && <h3 className="font-semibold text-3xl text-foreground">Recommended</h3>
            }
-            <div className="grid grid-cols-1 sm:gird-cols-2 md:grid-cols-3 lg:gird-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredData?.map((item: Product) => {
                 return <ProductCard key={item.id} data={item} />;
               })}

@@ -26,7 +26,7 @@ const HeroSection = () => {
         style={{
           backgroundImage: `url(${baseUrl})`,
         }}
-        className="relative w-full h-[500px] md:h-[600px] bg-cover bg-center rounded-3xl overflow-hidden shadow-2xl"
+        className="relative w-full h-[500px] md:h-[600px] bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 bg-cover bg-center rounded-3xl overflow-hidden shadow-2xl"
       >
         {/* Gradient Overlay - giữ màu cam đẹp */}
         <div className="absolute inset-0 bg-gradient-to-br from-orange-900/40 via-orange-800/30 to-yellow-900/40" />

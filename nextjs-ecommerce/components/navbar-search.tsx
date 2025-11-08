@@ -46,7 +46,7 @@ const NavbarSearch = () => {
     <div className="flex mx-auto relative">
       <Input
         size={35}
-        className="pr-12 outline-none rounded-xl max-md:text-white bg-transparent"
+        className="pr-12 outline-none rounded-xl bg-background border-border text-foreground placeholder:text-muted-foreground"
         placeholder="Tìm kiếm sản phẩm..."
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -54,7 +54,7 @@ const NavbarSearch = () => {
       />
       <SearchIcon
         size={20}
-        className="absolute right-0 mr-4 top-1/2 transform -translate-y-1/2"
+        className="absolute right-0 mr-4 top-1/2 transform -translate-y-1/2 text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
         onClick={handleSearchChange}
       />
     </div>

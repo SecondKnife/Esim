@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/get-current-user";
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   const user = await getCurrentUser();
 
@@ -22,6 +24,12 @@ export async function POST(req: Request) {
       sizes,
       categoryId,
       discount,
+      // eSIM/SIM specific fields
+      country,
+      region,
+      dataPlan,
+      validityDays,
+      simType,
     } = body;
 
     if (
@@ -58,8 +66,14 @@ export async function POST(req: Request) {
         categoryId,
         discount,
         finalPrice: priceDiscount,
+        // eSIM/SIM specific fields
+        country: country || null,
+        region: region || null,
+        dataPlan: dataPlan || null,
+        validityDays: validityDays || null,
+        simType: simType || null,
         productSizes: {
-          create: sizes.map((size: any) => ({
+          create: (sizes || []).map((size: any) => ({
             size: { connect: { id: size.id } },
             name: size.name,
           })),

@@ -54,8 +54,8 @@ const StatsOverview = () => {
         {[...Array(4)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="p-6">
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-muted rounded mb-2"></div>
+              <div className="h-8 bg-muted rounded"></div>
             </CardContent>
           </Card>
         ))}
@@ -66,57 +66,57 @@ const StatsOverview = () => {
   if (!stats) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg mb-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+    <div className="bg-gradient-to-r from-muted/50 to-muted/30 p-6 rounded-lg mb-8 border border-border">
+      <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
         📊 Thống kê eSIM Store
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white shadow-md">
+        <Card className="bg-card shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
               {stats.totalProducts}
             </div>
-            <div className="text-sm text-gray-600">Sản phẩm eSIM/SIM</div>
+            <div className="text-sm text-muted-foreground">Sản phẩm eSIM/SIM</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md">
+        <Card className="bg-card shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
               {stats.totalCategories}
             </div>
-            <div className="text-sm text-gray-600">Quốc gia</div>
+            <div className="text-sm text-muted-foreground">Quốc gia</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md">
+        <Card className="bg-card shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
               {stats.dataPlans.length}
             </div>
-            <div className="text-sm text-gray-600">Gói dung lượng</div>
+            <div className="text-sm text-muted-foreground">Gói dung lượng</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md">
+        <Card className="bg-card shadow-md">
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-orange-600 mb-2">
+            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
               {stats.simTypes.length}
             </div>
-            <div className="text-sm text-gray-600">Loại SIM</div>
+            <div className="text-sm text-muted-foreground">Loại SIM</div>
           </CardContent>
         </Card>
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-semibold text-gray-800 mb-2">🌍 Quốc gia có sẵn:</h3>
+        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+          <h3 className="font-semibold text-card-foreground mb-2">🌍 Quốc gia có sẵn:</h3>
           <div className="flex flex-wrap gap-1">
             {stats.countries.map((country, index) => (
               <span
                 key={index}
-                className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded"
+                className="text-xs bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-1 rounded"
               >
                 {country}
               </span>
@@ -124,13 +124,13 @@ const StatsOverview = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-semibold text-gray-800 mb-2">📱 Gói dung lượng:</h3>
+        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+          <h3 className="font-semibold text-card-foreground mb-2">📱 Gói dung lượng:</h3>
           <div className="flex flex-wrap gap-1">
             {stats.dataPlans.map((plan, index) => (
               <span
                 key={index}
-                className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded"
+                className="text-xs bg-green-500/20 text-green-700 dark:text-green-300 px-2 py-1 rounded"
               >
                 {plan}
               </span>
@@ -138,13 +138,13 @@ const StatsOverview = () => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-semibold text-gray-800 mb-2">🔧 Loại SIM:</h3>
+        <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
+          <h3 className="font-semibold text-card-foreground mb-2">🔧 Loại SIM:</h3>
           <div className="flex flex-wrap gap-1">
             {stats.simTypes.map((type, index) => (
               <span
                 key={index}
-                className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded"
+                className="text-xs bg-purple-500/20 text-purple-700 dark:text-purple-300 px-2 py-1 rounded"
               >
                 {type}
               </span>

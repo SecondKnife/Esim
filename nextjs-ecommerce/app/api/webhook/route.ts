@@ -38,12 +38,14 @@ export async function POST(req: Request) {
   if (event.type === "checkout.session.completed") {
     const order = await db.order.update({
       where: {
-        id: session?.metadata?.orderdId,
+        id: session?.metadata?.orderId,
       },
       data: {
         isPaid: true,
+        status: "paid",
         address: addressString,
         phone: session?.customer_details?.phone || "",
+        deliveryAddress: addressString,
       },
       include: {
         orderItems: true,

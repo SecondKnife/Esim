@@ -17,6 +17,14 @@ type CategoryProps = {
 };
 
 export function CarouselSpacing(data: CategoryProps) {
+  if (!data || !data.data || data.data.length === 0) {
+    return (
+      <div className="py-8 text-center text-muted-foreground">
+        <p>Chưa có danh mục nào</p>
+      </div>
+    );
+  }
+
   const formatData = data.data.slice(0, 5);
   return (
     <Carousel

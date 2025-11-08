@@ -13,12 +13,12 @@ const RelatedProducts = ({ products, currentProduct }: RelatedProductsProps) => 
   if (products.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-card rounded-lg shadow-lg p-6 border border-border">
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+        <h3 className="text-2xl font-bold text-card-foreground mb-2">
           Sản phẩm liên quan
         </h3>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Khám phá thêm các gói eSIM/SIM khác tại {currentProduct.country}
         </p>
       </div>
@@ -38,25 +38,25 @@ const RelatedProducts = ({ products, currentProduct }: RelatedProductsProps) => 
       </div>
 
       {/* Summary */}
-      <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+      <div className="mt-6 bg-muted/50 p-4 rounded-lg border border-border">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-lg font-bold text-blue-600">
+            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
               {products.length}
             </div>
-            <div className="text-sm text-gray-600">Sản phẩm khác</div>
+            <div className="text-sm text-muted-foreground">Sản phẩm khác</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-green-600">
+            <div className="text-lg font-bold text-green-600 dark:text-green-400">
               {Math.min(...products.map(p => p.finalPrice || p.price)).toLocaleString('vi-VN')} ₫
             </div>
-            <div className="text-sm text-gray-600">Giá thấp nhất</div>
+            <div className="text-sm text-muted-foreground">Giá thấp nhất</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-purple-600">
+            <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
               {Math.max(...products.map(p => p.validityDays || 0))} ngày
             </div>
-            <div className="text-sm text-gray-600">Thời hạn dài nhất</div>
+            <div className="text-sm text-muted-foreground">Thời hạn dài nhất</div>
           </div>
         </div>
       </div>

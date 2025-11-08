@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastProvider } from "@/providers/toast-provider";
+import ChatBubble from "@/components/chat-bubble";
 
 const montserrat = Montserrat({ 
   subsets: ["latin", "vietnamese"],
@@ -30,11 +31,32 @@ export default function RootLayout({
 }) {
   return (
     <ReactQueryProvider>
-      <html lang="vi">
+      <html lang="vi" suppressHydrationWarning>
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  try {
+                    const theme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const shouldBeDark = theme === 'dark' || (!theme && prefersDark);
+                    if (shouldBeDark) {
+                      document.documentElement.classList.add('dark');
+                    } else {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  } catch (e) {}
+                })();
+              `,
+            }}
+          />
+        </head>
         <body className={montserrat.className}>
           <ThemeProvider>
             <ToastProvider />
             {children}
+            <ChatBubble />
           </ThemeProvider>
         </body>
       </html>
