@@ -10,6 +10,13 @@ import Footer from "@/components/footer";
 import { CheckCircle, Copy, Check } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatVND } from "@/lib/utils";
+import CountdownTimer from "@/components/countdown-timer";
+
+type OrderItem = {
+  id: string;
+  productId: string;
+  productName: string;
+};
 
 type Order = {
   id: string;
@@ -17,7 +24,11 @@ type Order = {
   paymentMethod: string;
   totalPrice: number;
   customerName: string;
+  customerPhone: string;
+  orderItems: OrderItem[];
   bankTransferInfo?: string;
+  paymentDeadline?: string;
+  createdAt: string;
 };
 
 const CheckoutSuccessPage = () => {
@@ -76,6 +87,27 @@ const CheckoutSuccessPage = () => {
     ? JSON.parse(order.bankTransferInfo)
     : null;
 
+  // Get transfer content from bankTransferInfo or generate from order items
+  const getTransferContent = (): string => {
+    // Try to get from bankTransferInfo first
+    if (bankInfo && bankInfo.transferContent) {
+      return bankInfo.transferContent;
+    }
+    
+    // Generate from order items if not in bankTransferInfo
+    if (order.customerPhone && order.orderItems && order.orderItems.length > 0) {
+      const productNames = order.orderItems.map((item) => item.productName).join(" - ");
+      return `${productNames} - ${order.customerPhone}`;
+    }
+    
+    return order.id; // Fallback to order ID
+  };
+
+  const transferContent = getTransferContent();
+  
+  // Generate QR code data
+  const qrCodeData = transferContent || "";
+
   return (
     <Container>
       <div className="min-h-screen py-8">
@@ -132,6 +164,22 @@ const CheckoutSuccessPage = () => {
               <CardContent className="space-y-4">
                 {bankInfo && (
                   <>
+                    {/* Countdown Timer */}
+                    {order.paymentDeadline && (
+                      <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 mb-4">
+                        <CountdownTimer 
+                          deadline={order.paymentDeadline}
+                          onExpire={() => {
+                            // Refresh page to update order status
+                            window.location.reload();
+                          }}
+                        />
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Vui lòng chuyển khoản trong thời gian trên để đơn hàng được xử lý.
+                        </p>
+                      </div>
+                    )}
+                    
                     <p className="text-sm text-muted-foreground">
                       Vui lòng chuyển khoản theo thông tin sau:
                     </p>
@@ -172,17 +220,32 @@ const CheckoutSuccessPage = () => {
                           </button>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-foreground">Nội dung chuyển khoản:</span>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-sm">{order.id}</span>
-                          <button
-                            onClick={() => copyToClipboard(order.id)}
-                            className="text-orange-500 hover:text-orange-600"
-                          >
-                            {copied ? <Check size={16} /> : <Copy size={16} />}
-                          </button>
+                    </div>
+                    
+                    {/* QR Code Section */}
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <div className="flex flex-col items-center gap-4">
+                        {/* QR Code */}
+                        <div className="bg-white p-4 rounded-lg border-2 border-border shadow-sm">
+                          <div className="w-48 h-48 flex items-center justify-center bg-white">
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeData)}`}
+                              alt="Mã QR chuyển khoản"
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const parent = e.currentTarget.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = '<div class="text-center text-muted-foreground"><p class="text-sm">Không thể tạo mã QR</p></div>';
+                                }
+                              }}
+                            />
+                          </div>
                         </div>
+                        
+                        <p className="text-xs text-orange-500 dark:text-orange-400 font-medium text-center max-w-sm">
+                          💡 Vui lòng nhập mã sản phẩm + số điện thoại khi quét mã QR chuyển khoản.
+                        </p>
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-4">

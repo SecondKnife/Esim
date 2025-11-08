@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
@@ -22,14 +22,14 @@ model Product {
   discount     Float?
   featured     Boolean
   productSizes ProductSize[]
-  
+
   // eSIM specific fields
-  country      String?       // Thái Lan, Singapore, Mỹ, etc.
-  region       String?        // Đông Nam Á, Châu Á, Châu Âu, etc.
-  dataPlan     String?        // 5GB, 10GB, 20GB, Unlimited
-  validityDays Int?          // 7, 14, 30 days
-  simType      String?        // "SIM" hoặc "eSIM"
-  
+  country      String? // Thái Lan, Singapore, Mỹ, etc.
+  region       String? // Đông Nam Á, Châu Á, Châu Âu, etc.
+  dataPlan     String? // 5GB, 10GB, 20GB, Unlimited
+  validityDays Int? // 7, 14, 30 days
+  simType      String? // "SIM" hoặc "eSIM"
+
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   OrderItem OrderItem[]
@@ -109,41 +109,44 @@ model OrderItem {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  orderItems      OrderItem[]
-  isPaid          Boolean     @default(false)
-  phone           String      @default("")
-  address         String      @default("")
-  userId          String?
-  user            User?       @relation(fields: [userId], references: [id])
-  
+  id         String      @id @default(cuid())
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  userId     String?
+  user       User?       @relation(fields: [userId], references: [id])
+
   // Customer information
-  customerName    String      @default("")
-  customerEmail   String      @default("")
-  customerPhone   String      @default("")
-  deliveryAddress String      @default("")
-  
+  customerName    String @default("")
+  customerEmail   String @default("")
+  customerPhone   String @default("")
+  deliveryAddress String @default("")
+
   // Payment information
-  paymentMethod   String      @default("") // "bank_transfer", "visa", "cod"
-  status          String      @default("pending_payment") // "pending_payment", "paid", "shipping", "delivered", "cancelled"
-  
+  paymentMethod String @default("") // "bank_transfer", "visa", "cod"
+  status        String @default("pending_payment") // "pending_payment", "paid", "shipping", "delivered", "cancelled"
+
   // Bank transfer information
-  bankTransferInfo String?    // JSON string for bank account details
-  
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  bankTransferInfo String? // JSON string for bank account details
+
+  // Payment deadline for bank transfer (15 minutes from creation)
+  paymentDeadline DateTime? // Deadline for payment confirmation (only for bank_transfer)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  email     String   @unique
+  email     String    @unique
   password  String
-  role      String   @default("USER") // ADMIN or USER
+  role      String    @default("USER") // ADMIN or USER
   orders    Order[]
   sessions  Session[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Session {

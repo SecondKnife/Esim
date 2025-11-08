@@ -70,8 +70,9 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (paymentMethod === "cod" && !customerInfo.address) {
-      toast.error("Vui lòng nhập địa chỉ giao hàng cho đơn hàng COD");
+    // Address is required for both COD and bank transfer
+    if ((paymentMethod === "cod" || paymentMethod === "bank_transfer") && !customerInfo.address) {
+      toast.error("Vui lòng nhập địa chỉ giao hàng");
       return;
     }
 
@@ -92,38 +93,46 @@ const CheckoutPage = () => {
 
         const stripe = stripePromise ? await stripePromise : null;
         if (stripe && response.data.sessionId) {
+          // @ts-ignore - Stripe types may not be fully loaded
           await stripe.redirectToCheckout({
             sessionId: response.data.sessionId,
           });
         }
-      } else if (paymentMethod === "bank_transfer") {
-        // Bank transfer
-        const response = await axios.post("/api/checkout", {
-          items,
-          customerInfo,
-          paymentMethod: "bank_transfer",
-        });
+            } else if (paymentMethod === "bank_transfer") {
+              // Bank transfer - create order and redirect to pending page
+              const response = await axios.post("/api/checkout", {
+                items,
+                customerInfo,
+                paymentMethod: "bank_transfer",
+                deliveryAddress: customerInfo.address,
+              });
 
-        if (response.data.orderId) {
-          toast.success("Đơn hàng đã được tạo. Vui lòng chuyển khoản theo thông tin bên dưới.");
-          router.push(`/checkout/success?orderId=${response.data.orderId}`);
-          removeAllCart();
-        }
-      } else if (paymentMethod === "cod") {
-        // COD
-        const response = await axios.post("/api/checkout", {
-          items,
-          customerInfo,
-          paymentMethod: "cod",
-          deliveryAddress: customerInfo.address,
-        });
+              if (response.data.orderId && response.data.success) {
+                // Clear cart first
+                removeAllCart();
+                // Show success message
+                toast.success("Đơn hàng đã được tạo. Vui lòng chuyển khoản trong vòng 15 phút.");
+                // Redirect to pending page with orderId
+                window.location.href = `/checkout/pending?orderId=${response.data.orderId}`;
+                return; // Exit early to prevent further execution
+              } else {
+                toast.error("Không thể tạo đơn hàng. Vui lòng thử lại.");
+              }
+            } else if (paymentMethod === "cod") {
+              // COD - redirect to success page directly
+              const response = await axios.post("/api/checkout", {
+                items,
+                customerInfo,
+                paymentMethod: "cod",
+                deliveryAddress: customerInfo.address,
+              });
 
-        if (response.data.orderId) {
-          toast.success("Đơn hàng COD đã được tạo. Admin sẽ liên hệ với bạn sớm nhất.");
-          router.push(`/checkout/success?orderId=${response.data.orderId}`);
-          removeAllCart();
-        }
-      }
+              if (response.data.orderId) {
+                toast.success("Đơn hàng COD đã được tạo. Admin sẽ liên hệ với bạn sớm nhất.");
+                router.push(`/checkout/success?orderId=${response.data.orderId}`);
+                removeAllCart();
+              }
+            }
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Có lỗi xảy ra khi tạo đơn hàng");
     } finally {
@@ -131,13 +140,6 @@ const CheckoutPage = () => {
     }
   };
 
-  // Bank account info (you can move this to env or config)
-  const bankAccountInfo = {
-    bankName: "Ngân hàng Techcombank",
-    accountNumber: "1903 8765 4321",
-    accountName: "CONG TY TNHH ESIM STORE",
-    branch: "Chi nhánh Hà Nội",
-  };
 
   return (
     <div className="bg-background min-h-screen">
@@ -149,10 +151,10 @@ const CheckoutPage = () => {
             {/* Customer Info & Payment Method */}
             <div className="lg:col-span-1 space-y-6">
               <Card className="bg-card border border-border shadow-sm">
-                <CardHeader>
+                <CardHeader className="p-6 pb-4">
                   <CardTitle className="text-foreground">Thông tin khách hàng</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-6 pb-6 pt-0">
                   <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
@@ -208,13 +210,13 @@ const CheckoutPage = () => {
                   {(paymentMethod === "cod" || paymentMethod === "bank_transfer") && (
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Địa chỉ giao hàng {paymentMethod === "cod" && "*"}
+                        Địa chỉ giao hàng *
                       </label>
                       <Input
                         type="text"
                         name="address"
                         autoComplete="street-address"
-                        required={paymentMethod === "cod"}
+                        required
                         value={customerInfo.address}
                         onChange={(e) =>
                           setCustomerInfo({ ...customerInfo, address: e.target.value })
@@ -305,25 +307,18 @@ const CheckoutPage = () => {
                     </div>
                   </div>
 
-                  {paymentMethod === "bank_transfer" && (
-                    <div className="bg-muted/50 p-4 rounded-lg border border-border text-muted-foreground">
-                      <h3 className="font-semibold text-foreground mb-2">Thông tin chuyển khoản</h3>
-                      <div className="space-y-2">
-                        <p className="text-foreground">Ngân hàng: {bankAccountInfo.bankName}</p>
-                        <p className="text-foreground">Số tài khoản: {bankAccountInfo.accountNumber}</p>
-                        <p className="text-foreground">Chủ tài khoản: {bankAccountInfo.accountName}</p>
-                        <p className="text-foreground">Chi nhánh: {bankAccountInfo.branch}</p>
-                        <p className="text-sm mt-2 text-orange-500 dark:text-orange-400">
-                          Vui lòng chuyển khoản với nội dung là SĐT của bạn để đơn hàng được xử lý nhanh nhất.
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                         {paymentMethod === "bank_transfer" && (
+                           <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 p-4 rounded-lg">
+                             <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
+                               ⏰ Sau khi đặt hàng, bạn sẽ có <strong className="text-orange-700 dark:text-orange-300">15 phút</strong> để chuyển khoản. Thông tin chuyển khoản và mã QR sẽ được hiển thị ở trang tiếp theo.
+                             </p>
+                           </div>
+                         )}
 
                   {paymentMethod === "cod" && (
-                    <div className="bg-muted/50 p-4 rounded-lg border border-border text-muted-foreground">
-                      <p className="text-orange-500 dark:text-orange-400">
-                        Bạn sẽ thanh toán tiền mặt khi nhận hàng. Đơn hàng sẽ được xử lý sau khi xác nhận.
+                    <div className="bg-muted/50 dark:bg-muted/30 p-4 rounded-lg border border-border">
+                      <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
+                        💰 Bạn sẽ thanh toán tiền mặt khi nhận hàng. Đơn hàng sẽ được xử lý sau khi xác nhận.
                       </p>
                     </div>
                   )}
@@ -331,7 +326,7 @@ const CheckoutPage = () => {
                   <Button
                     type="submit"
                     disabled={loading || items.length === 0}
-                    className="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white"
+                    className="w-full mt-6 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
                   >
                     {loading ? "Đang xử lý..." : "Đặt hàng"}
                   </Button>
@@ -343,10 +338,10 @@ const CheckoutPage = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1 mt-8 lg:mt-0">
             <Card className="bg-card border border-border shadow-sm">
-              <CardHeader>
+              <CardHeader className="p-6 pb-4">
                 <CardTitle className="text-foreground">Tóm tắt đơn hàng</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-6 pb-6 pt-0">
                 <ul className="space-y-4">
                   {items.map((item) => (
                     <li key={item.id} className="flex justify-between items-center text-foreground">

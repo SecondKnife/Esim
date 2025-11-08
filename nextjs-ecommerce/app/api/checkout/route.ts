@@ -26,6 +26,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Customer info and payment method are required" }, { status: 400 });
     }
 
+    // Validate delivery address for COD and bank transfer
+    if ((paymentMethod === "cod" || paymentMethod === "bank_transfer") && !deliveryAddress && !customerInfo.address) {
+      return NextResponse.json({ error: "Delivery address is required for COD and bank transfer orders" }, { status: 400 });
+    }
+
     // Get current user if logged in
     const user = await getCurrentUser();
 
@@ -66,7 +71,19 @@ export async function POST(req: Request) {
 
     // Add bank transfer info if payment method is bank_transfer
     if (paymentMethod === "bank_transfer") {
-      orderData.bankTransferInfo = JSON.stringify(bankAccountInfo);
+      // Generate transfer content: product names + phone number
+      const productNames = items.map((item: CartItem) => item.title).join(" - ");
+      const transferContent = `${productNames} - ${customerInfo.phone}`;
+      
+      orderData.bankTransferInfo = JSON.stringify({
+        ...bankAccountInfo,
+        transferContent: transferContent, // Lưu nội dung chuyển khoản
+      });
+      
+      // Set payment deadline: 15 minutes from now
+      const now = new Date();
+      const paymentDeadline = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes
+      orderData.paymentDeadline = paymentDeadline;
     }
 
     const order = await db.order.create({

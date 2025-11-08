@@ -69,6 +69,27 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
+    // Get order to check payment deadline
+    const existingOrder = await db.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!existingOrder) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // Check if payment deadline has passed for bank transfer orders
+    if (status === "paid" && existingOrder.paymentMethod === "bank_transfer" && existingOrder.paymentDeadline) {
+      const deadline = new Date(existingOrder.paymentDeadline);
+      const now = new Date();
+      if (now > deadline) {
+        return NextResponse.json(
+          { error: "Payment deadline has passed. Cannot confirm payment after 15 minutes." },
+          { status: 400 }
+        );
+      }
+    }
+
     const updateData: any = { status };
 
     // If status is paid, also update isPaid

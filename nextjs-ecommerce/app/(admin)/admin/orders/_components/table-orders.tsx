@@ -39,6 +39,7 @@ type Order = {
   customerEmail: string;
   customerPhone: string;
   deliveryAddress: string;
+  paymentDeadline?: string;
 };
 
 const TableOrders = () => {
@@ -99,6 +100,16 @@ const TableOrders = () => {
       cod: "COD",
     };
     return methodMap[method] || method;
+  };
+
+  // Check if payment deadline has passed (15 minutes)
+  const isPaymentDeadlinePassed = (order: Order): boolean => {
+    if (!order.paymentDeadline || order.paymentMethod !== "bank_transfer") {
+      return false;
+    }
+    const deadline = new Date(order.paymentDeadline);
+    const now = new Date();
+    return now > deadline;
   };
 
   if (isLoading) {
@@ -243,7 +254,7 @@ const TableOrders = () => {
                         {updatingOrder === order.id ? "Đang xử lý..." : "Xác nhận đã giao"}
                       </Button>
                     )}
-                    {order.status === "pending_payment" && order.paymentMethod === "bank_transfer" && (
+                    {order.status === "pending_payment" && order.paymentMethod === "bank_transfer" && !isPaymentDeadlinePassed(order) && (
                       <Button
                         size="sm"
                         onClick={() => updateOrderStatus(order.id, "paid")}
@@ -252,6 +263,11 @@ const TableOrders = () => {
                       >
                         {updatingOrder === order.id ? "Đang xử lý..." : "Xác nhận đã thanh toán"}
                       </Button>
+                    )}
+                    {order.status === "pending_payment" && order.paymentMethod === "bank_transfer" && isPaymentDeadlinePassed(order) && (
+                      <span className="text-xs text-red-500 dark:text-red-400 font-medium">
+                        Đã hết thời gian xác nhận
+                      </span>
                     )}
                   </div>
                 </TableCell>
