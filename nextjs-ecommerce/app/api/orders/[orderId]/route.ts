@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
 
+export const runtime = 'nodejs';
+
 export async function GET(
   req: Request,
   { params }: { params: { orderId: string } }

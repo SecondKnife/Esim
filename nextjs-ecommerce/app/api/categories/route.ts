@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { NextResponse } from "next/server";
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   const user = await getCurrentUser();
 
