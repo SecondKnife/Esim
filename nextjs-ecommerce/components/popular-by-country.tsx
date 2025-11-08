@@ -86,7 +86,7 @@ const PopularByCountry = ({ products }: PopularByCountryProps) => {
         );
       })}
 
-      {countryProducts.length === 0 && !loading && (
+      {countryProducts.length === 0 && (
         <div className="text-center py-16">
           <div className="text-muted-foreground text-lg">
             Không có sản phẩm nào được tìm thấy
