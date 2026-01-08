@@ -1,0 +1,162 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+// Seed configuration
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id           String        @id @default(uuid())  // UUID format
+  title        String
+  description  String
+  imageURLs    String
+  category     String
+  categoryId   String
+  price        Float
+  finalPrice   Float?
+  discount     Float?
+  featured     Boolean
+  productSizes ProductSize[]
+
+  // eSIM specific fields
+  country      String? // Thái Lan, Singapore, Mỹ, etc.
+  region       String? // Đông Nam Á, Châu Á, Châu Âu, etc.
+  dataPlan     String? // 5GB, 10GB, 20GB, Unlimited
+  validityDays Int? // 7, 14, 30 days
+  simType      String? // "SIM" hoặc "eSIM"
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderItem OrderItem[]
+}
+
+model Category {
+  id            String         @id @default(uuid())  // UUID format
+  billboard     String
+  billboardId   String
+  category      String
+  categorySizes CategorySize[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Billboard {
+  id        String @id @default(uuid())  // UUID format
+  billboard String
+  imageURL  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Size {
+  id            String         @id @default(cuid())
+  name          String
+  productSizes  ProductSize[]
+  categorySizes CategorySize[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductSize {
+  id        String   @id @default(cuid())
+  productId String
+  sizeId    String
+  product   Product? @relation(fields: [productId], references: [id])
+  size      Size     @relation(fields: [sizeId], references: [id])
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([sizeId])
+}
+
+model CategorySize {
+  id         String   @id @default(cuid())
+  categoryId String
+  sizeId     String
+  category   Category @relation(fields: [categoryId], references: [id])
+  size       Size     @relation(fields: [sizeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([sizeId])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id])
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  productName String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  userId     String?
+  user       User?       @relation(fields: [userId], references: [id])
+
+  // Customer information
+  customerName    String @default("")
+  customerEmail   String @default("")
+  customerPhone   String @default("")
+  deliveryAddress String @default("")
+
+  // Payment information
+  paymentMethod String @default("") // "bank_transfer", "visa", "cod"
+  status        String @default("pending_payment") // "pending_payment", "paid", "shipping", "delivered", "cancelled"
+
+  // Bank transfer information
+  bankTransferInfo String? // JSON string for bank account details
+
+  // Payment deadline for bank transfer (15 minutes from creation)
+  paymentDeadline DateTime? // Deadline for payment confirmation (only for bank_transfer)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String    @id @default(uuid())  // UUID format
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("USER") // ADMIN or USER
+  orders    Order[]
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Session {
+  id        String   @id @default(uuid())  // UUID format
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+}

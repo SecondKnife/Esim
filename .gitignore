@@ -1,0 +1,49 @@
+# Root gitignore for monorepo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Helper scripts (local development only)
+*.bat
+*.ps1
+KILL_PORT.*
+clean-restart.*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Documentation that's auto-generated or for local use only
+PRODUCTION.md
+DEPLOYMENT.md
+TODO.md
+NOTES.md
+
+# Keep important docs
+!README.md
+!LICENSE.md
+!CONTRIBUTING.md
+!CHANGELOG.md
