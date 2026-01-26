@@ -2,8 +2,7 @@ import TitleHeader from "@/app/(admin)/_components/title-header";
 import React from "react";
 import NewUser from "../../_components/new-user";
 
-// Required for static export with dynamic routes
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ userId: string }>> {
   return [];
 }
 

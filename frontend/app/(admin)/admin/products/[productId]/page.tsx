@@ -1,8 +1,7 @@
 import TitleHeader from "@/app/(admin)/_components/title-header";
 import EditProduct from "../_components/edit-product";
 
-// Required for static export with dynamic routes
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ productId: string }>> {
   return [];
 }
 

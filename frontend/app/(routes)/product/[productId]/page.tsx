@@ -3,6 +3,12 @@
 import ProductDetailPage from "./_components/product-detail";
 import Footer from "@/components/footer";
 
+export async function generateStaticParams(): Promise<Array<{ productId: string }>> {
+  return [];
+}
+
+export const dynamicParams = true;
+
 const ProductPage = () => {
   return (
     <div>
@@ -13,14 +19,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-
-// Required for output: 'export' with dynamic routes
-// For static export, we return empty array and let client-side handle routing
-export async function generateStaticParams() {
-  // In static export mode, we can't fetch from API at build time
-  // Return empty array and let client-side routing handle it
-  return [];
-}
-
-// Allow params not in generateStaticParams (for dev mode)
-export const dynamicParams = true;

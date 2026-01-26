@@ -1,8 +1,7 @@
 import TitleHeader from "@/app/(admin)/_components/title-header";
 import NewBillboard from "../../_components/new-billboard";
 
-// Required for static export with dynamic routes
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
   return [];
 }
 
