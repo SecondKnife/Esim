@@ -16,18 +16,18 @@ import { Button } from "@/components/ui/button";
 import { productAPI, sizeAPI } from "@/lib/api-client";
 
 const ProductItem = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
   const { productId } = useParams();
 
   const [productQuery, relatedQuery] = useQueries({
     queries: [
       {
         queryKey: ["single product", productId],
-        queryFn: async () => await productAPI.getById(productId as string),
+        queryFn: async () => await productAPI.getById(productId as string) as Promise<Product>,
       },
       {
         queryKey: ["related products"],
-        queryFn: async () => await productAPI.getAll(),
+        queryFn: async () => await productAPI.getAll() as Promise<Product[]>,
       },
     ],
   });
@@ -36,7 +36,7 @@ const ProductItem = () => {
     queryKey: ["product categories", productQuery.data?.categoryId],
     queryFn: async () => {
       if (!productQuery.data?.categoryId) return [];
-      const data = await sizeAPI.getByCategoryId(productQuery.data.categoryId);
+      const data = await sizeAPI.getByCategoryId(productQuery.data.categoryId) as Array<{ id: string; name: string }>;
       const sortedData = data.sort((a: any, b: any) => {
         return a.name - b.name;
       });
@@ -71,12 +71,12 @@ const ProductItem = () => {
             <p className="text-md font-semibold">Back to shop</p>
           </Link>
           <div className="lg:grid lg:grid-cols-[500px_minmax(400px,_1fr)_100px] lg:items-start lg:gap-x-8">
-            <Gallery images={productQuery.data?.imageURLs} />
+            <Gallery images={Array.isArray(productQuery.data?.imageURLs) ? productQuery.data.imageURLs : productQuery.data?.imageURLs ? [productQuery.data.imageURLs] : []} />
             <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
               <Info
                 data={productQuery?.data}
-                categories={categories}
-                availableSizes={productQuery.data.productSizes}
+                categories={categories as unknown as Category[]}
+                availableSizes={(productQuery.data as any).productSizes as unknown as Category[]}
               />
             </div>
           </div>

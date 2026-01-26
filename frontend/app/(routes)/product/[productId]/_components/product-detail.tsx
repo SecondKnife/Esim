@@ -22,18 +22,18 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
 
   // Fetch product
-  const { data: product, isLoading: productLoading, error: productError } = useQuery({
+  const { data: product, isLoading: productLoading, error: productError } = useQuery<Product>({
     queryKey: ["product", productId],
-    queryFn: () => productAPI.getById(productId as string),
+    queryFn: () => productAPI.getById(productId as string) as Promise<Product>,
     retry: 2,
     retryDelay: 1000,
     enabled: !!productId,
   });
 
   // Fetch all products for related products
-  const { data: allProducts = [] } = useQuery({
+  const { data: allProducts = [] } = useQuery<Product[]>({
     queryKey: ["products"],
-    queryFn: () => productAPI.getAll(),
+    queryFn: () => productAPI.getAll() as Promise<Product[]>,
     retry: 2,
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000,

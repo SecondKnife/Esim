@@ -89,7 +89,7 @@ const CheckoutPage = () => {
           items,
           customerInfo,
           paymentMethod: "visa",
-        });
+        }) as { sessionId?: string; orderId?: string; success?: boolean; error?: string };
 
         const stripe = stripePromise ? await stripePromise : null;
         if (stripe && response.sessionId) {
@@ -105,7 +105,7 @@ const CheckoutPage = () => {
                 customerInfo,
                 paymentMethod: "bank_transfer",
                 deliveryAddress: customerInfo.address,
-              });
+              }) as { sessionId?: string; orderId?: string; success?: boolean; error?: string };
 
               if (response.orderId && response.success) {
                 // Clear cart first
@@ -125,7 +125,7 @@ const CheckoutPage = () => {
                 customerInfo,
                 paymentMethod: "cod",
                 deliveryAddress: customerInfo.address,
-              });
+              }) as { sessionId?: string; orderId?: string; success?: boolean; error?: string };
 
               if (response.orderId) {
                 toast.success("Đơn hàng COD đã được tạo. Admin sẽ liên hệ với bạn sớm nhất.");

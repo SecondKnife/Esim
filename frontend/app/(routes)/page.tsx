@@ -11,7 +11,7 @@ import StatsOverview from "@/components/stats-overview";
 import { getAllProducts, getCategories } from "@/lib/apiCalls";
 import ProductCard from "@/components/ui/product-card";
 import { useQuery } from "@tanstack/react-query";
-import { Category, Product } from "@/types";
+import { Category, Product, Billboard } from "@/types";
 
 // Lazy load các components nặng
 const CarouselFeatured = dynamicImport(() => import("@/components/CarouselFeatured"), {
@@ -62,11 +62,11 @@ const HomePage = () => {
   });
 
   // Fetch billboards (chỉ 1 lần duy nhất)
-  const { data: billboards = [], isLoading: billboardsLoading } = useQuery({
+  const { data: billboards = [], isLoading: billboardsLoading } = useQuery<Billboard[]>({
     queryKey: ["billboards"],
     queryFn: async () => {
       const { billboardAPI } = await import("@/lib/api-client");
-      return billboardAPI.getAll();
+      return billboardAPI.getAll() as Promise<Billboard[]>;
     },
     retry: 2,
     retryDelay: 1000,

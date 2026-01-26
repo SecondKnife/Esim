@@ -25,7 +25,7 @@ export const useCurrentUser = (): UseCurrentUserResponse => {
     queryKey: ["currentUser"],
     queryFn: async () => {
       try {
-        const response = await authAPI.getCurrentUser();
+        const response = await authAPI.getCurrentUser() as { user: User | null };
         return response.user as User | null;
       } catch (error) {
         return null;

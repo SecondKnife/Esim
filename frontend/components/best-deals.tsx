@@ -13,7 +13,7 @@ const BestDeals = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const allProducts: Product[] = await productAPI.getAll();
+        const allProducts: Product[] = await productAPI.getAll() as Product[];
 
         // Filter products with discounts and sort by discount percentage
         const discountedProducts = allProducts
