@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy:r2": "node scripts/deploy-r2.js",
+    "build:deploy": "npm run build && npm run deploy:r2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.460.0",
@@ -50,7 +52,8 @@
     "stripe": "^14.9.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "mime-types": "^2.1.35"
   },
   "devDependencies": {
     "@types/node": "^20",
