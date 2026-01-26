@@ -85,17 +85,61 @@ JWT_SECRET=your-secret-key-here
 
 ## Deployment to VPS
 
-1. Build the project:
+Xem hướng dẫn chi tiết trong [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+### Quick Start với PM2:
+
+1. Copy file env.example thành .env và cấu hình:
 ```bash
+cp env.example .env
+nano .env  # Cấu hình các biến môi trường
+```
+
+2. Chạy script deployment tự động:
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+Hoặc thực hiện thủ công:
+
+```bash
+# Install dependencies
+npm install --production
+
+# Generate Prisma Client
+npm run prisma:generate
+
+# Build TypeScript
 npm run build
+
+# Run migrations
+npm run prisma:migrate:deploy
+
+# Start with PM2
+npm run start:pm2
 ```
 
-2. Start production server:
+### Quick Start với Docker:
+
 ```bash
-npm start
+# Cấu hình .env file
+cp env.example .env
+nano .env
+
+# Start với docker-compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f backend
 ```
 
-3. Use PM2 or similar process manager:
-```bash
-pm2 start dist/server.js --name backend-api
-```
+### Scripts có sẵn:
+
+- `npm run dev` - Development server với hot reload
+- `npm run build` - Build TypeScript sang JavaScript
+- `npm start` - Start production server
+- `npm run start:pm2` - Start với PM2 process manager
+- `npm run prisma:generate` - Generate Prisma Client
+- `npm run prisma:migrate` - Run migrations (development)
+- `npm run prisma:migrate:deploy` - Run migrations (production)

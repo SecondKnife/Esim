@@ -1,25 +1,21 @@
-# Backend .gitignore
-
 # Dependencies
 node_modules/
-/.pnp
+.pnp
 .pnp.js
+
+# Testing
+coverage/
+
+# Production
+dist/
+build/
 
 # Environment variables
 .env
 .env.local
-.env.*.local
-
-# Database
-prisma/dev.db
-prisma/dev.db-journal
-*.db
-*.db-journal
-
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 logs/
@@ -27,18 +23,17 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pm2-error.log
+pm2-out.log
 
-# Testing
-coverage/
-.nyc_output/
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# OS files
+# OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # IDE
@@ -46,24 +41,14 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+*~
 
-# Helper scripts (local development only)
-*.bat
-*.ps1
-KILL_PORT.*
-scripts/*.ps1
-scripts/*.bat
+# Prisma
+*.db
+*.db-journal
 
-# Auto-generated Prisma files (keep in version control but ignore local changes)
-# Uncomment if you want to ignore:
-# prisma/migrations/
-
-# Documentation (local only)
-PRODUCTION.md
-NOTES.md
-
-# Keep important files
-!README.md
-!prisma/schema.prisma
-!prisma/seed.ts
-!prisma/seed-uuid.ts
+# Misc
+.cache/
+.parcel-cache/
+.next/
+out/
