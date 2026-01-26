@@ -21,7 +21,17 @@ const path = require('path');
 const mime = require('mime-types');
 
 // Load environment variables
-require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
+// Try .env.local first, then fallback to .env
+const envLocalPath = path.resolve(__dirname, '../.env.local');
+const envPath = path.resolve(__dirname, '../.env');
+if (fs.existsSync(envLocalPath)) {
+  require('dotenv').config({ path: envLocalPath });
+} else if (fs.existsSync(envPath)) {
+  require('dotenv').config({ path: envPath });
+} else {
+  // In Cloudflare Pages, env vars are available via process.env
+  console.log('ℹ️  No .env file found, using environment variables from system');
+}
 
 // R2 Configuration (R2 is S3-compatible)
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
