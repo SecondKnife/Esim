@@ -65,7 +65,7 @@ export default function UnauthorizedPage() {
           </Link>
           
           {!user && (
-            <Link href="/login/">
+            <Link href="/login">
               <Button className="w-full sm:w-auto">
                 <LogIn className="mr-2 h-4 w-4" />
                 Login

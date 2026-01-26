@@ -59,13 +59,13 @@ const NavBar = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   {(user.role === "ADMIN" || user.role === "MODERATOR") && (
-                    <Link href="/admin/">
+                    <Link href="/admin">
                       <Button className="rounded-full bg-orange-500 hover:bg-orange-600 text-white" size="sm">
                         Admin
                       </Button>
                     </Link>
                   )}
-                  <Link href="/logout/">
+                  <Link href="/logout">
                     <Button className="rounded-full border-2 border-orange-500 bg-transparent text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-300 hover:border-orange-600 dark:hover:border-orange-500 transition-colors" size="sm">
                       Đăng xuất
                     </Button>
@@ -74,12 +74,12 @@ const NavBar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/signup/">
+                <Link href="/signup">
                   <Button className="rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold" size="sm">
                     Đăng ký
                   </Button>
                 </Link>
-                <Link href="/login/">
+                <Link href="/login">
                   <Button className="rounded-full border-2 border-orange-500 bg-transparent text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-300 hover:border-orange-600 dark:hover:border-orange-500 transition-colors font-semibold" size="sm">
                     Đăng nhập
                   </Button>

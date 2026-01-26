@@ -35,10 +35,10 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-bold mb-4 text-lg">Sản phẩm</h3>
             <ul className="space-y-2">
-              <li><Link href="/shop/" className="hover:text-orange-500 transition-colors">Tất cả sản phẩm</Link></li>
-              <li><Link href="/featured/" className="hover:text-orange-500 transition-colors">Sản phẩm nổi bật</Link></li>
-              <li><Link href="/shop/" className="hover:text-orange-500 transition-colors">eSIM du lịch</Link></li>
-              <li><Link href="/shop/" className="hover:text-orange-500 transition-colors">SIM thẻ</Link></li>
+              <li><Link href="/shop" className="hover:text-orange-500 transition-colors">Tất cả sản phẩm</Link></li>
+              <li><Link href="/featured" className="hover:text-orange-500 transition-colors">Sản phẩm nổi bật</Link></li>
+              <li><Link href="/shop" className="hover:text-orange-500 transition-colors">eSIM du lịch</Link></li>
+              <li><Link href="/shop" className="hover:text-orange-500 transition-colors">SIM thẻ</Link></li>
             </ul>
           </div>
 

@@ -28,10 +28,10 @@ const SidebarItems = ({ category }: any) => {
         ))}
       </select>
       <div className="hidden sm:block">
-        <Link href="/shop/">
+        <Link href="/shop">
           <p
             className={`w-full text-foreground hover:underline underline-offset-4 tracking-widest font-serif ${
-              pathName === "/shop" || pathName === "/shop/" ? "underline" : ""
+              pathName === "/shop" ? "underline" : ""
             }`}
           >
             All

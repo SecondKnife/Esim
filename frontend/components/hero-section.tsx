@@ -45,12 +45,12 @@ const HeroSection = () => {
           
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-3 md:gap-4 justify-center mb-8 md:mb-12">
-            <Link href="/shop/">
+            <Link href="/shop">
               <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 Khám phá ngay
               </button>
             </Link>
-            <Link href="/featured/">
+            <Link href="/featured">
               <button className="bg-white/95 hover:bg-white text-gray-900 font-bold px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                 Xem ưu đãi
               </button>

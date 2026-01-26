@@ -34,7 +34,7 @@ const nextConfig = {
   },
   // Static export for CloudFront deployment
   output: 'export',
-  trailingSlash: true,
+  trailingSlash: false,
   // Disable server-side features for static export
   reactStrictMode: true,
   // Optimize build performance

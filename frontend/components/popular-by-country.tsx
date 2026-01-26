@@ -69,7 +69,7 @@ const PopularByCountry = ({ products }: PopularByCountryProps) => {
                 </Link>
               ) : (
                 <Link 
-                  href="/shop/"
+                  href="/shop"
                   className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 font-semibold text-sm flex items-center gap-1 transition-colors"
                 >
                   Xem tất cả →
