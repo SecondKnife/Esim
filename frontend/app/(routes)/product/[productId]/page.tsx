@@ -7,7 +7,9 @@ export async function generateStaticParams(): Promise<Array<{ productId: string 
   return [];
 }
 
-export const dynamicParams = true;
+// Force static generation for export builds
+export const dynamic = "force-static";
+export const dynamicParams = false;
 
 const ProductPage = () => {
   return (

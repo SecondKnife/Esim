@@ -1,11 +1,13 @@
 import TitleHeader from "@/app/(admin)/_components/title-header";
 import NewBillboard from "../../_components/new-billboard";
 
-export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+export function generateStaticParams() {
   return [];
 }
 
-export const dynamicParams = true;
+// Force static generation for export builds
+export const dynamic = "force-static";
+export const dynamicParams = false;
 
 export default function EditBillboardPage() {
   return (
