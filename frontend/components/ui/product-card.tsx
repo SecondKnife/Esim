@@ -36,12 +36,12 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
   const [imageError, setImageError] = useState(false);
 
   const handleClick = () => {
-    router.push(`/product/${data?.id}`);
+    router.push(`/product?productId=${data?.id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/product/${data?.id}`);
+    router.push(`/product?productId=${data?.id}`);
   };
 
   const handleImageError = () => {

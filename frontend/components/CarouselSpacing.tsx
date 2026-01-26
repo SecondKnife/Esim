@@ -53,7 +53,7 @@ export function CarouselSpacing({ data, billboards }: CategoryProps) {
               key={category.id}
               className="max-sm:basis-3/4 md:basis-1/2 lg:basis-1/3"
             >
-              <Link href={`/shop/${category.category}`}>
+              <Link href={`/shop/category?category=${encodeURIComponent(category.category)}`}>
                 <CardItem
                   billboard={billboard}
                   category={category.category}

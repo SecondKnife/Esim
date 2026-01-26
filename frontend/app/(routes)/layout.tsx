@@ -1,16 +1,15 @@
-"use client";
-
 import NavBar from "@/components/navbar";
+import { Suspense } from "react";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+export default function RoutesLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="min-h-full h-full w-full">
-        <NavBar />
+        <Suspense fallback={<div className="h-20 border-b border-border bg-background" />}>
+          <NavBar />
+        </Suspense>
         {children}
       </div>
     </>
   );
-};
-
-export default layout;
+}

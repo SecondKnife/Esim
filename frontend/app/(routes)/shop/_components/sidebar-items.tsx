@@ -22,7 +22,7 @@ const SidebarItems = ({ category }: any) => {
       >
         <option value="/shop">All</option>
         {category?.map((category: any) => (
-          <option key={category.id} value={`/shop/${category.category}`}>
+          <option key={category.id} value={`/shop/category?category=${encodeURIComponent(category.category)}`}>
             {category.billboard || category.category[0].toUpperCase() + category.category.slice(1)}
           </option>
         ))}
@@ -38,10 +38,10 @@ const SidebarItems = ({ category }: any) => {
           </p>
         </Link>
         {category?.map((category: any) => (
-          <Link key={category.id} href={`/shop/${category.category}`}>
+          <Link key={category.id} href={`/shop/category?category=${encodeURIComponent(category.category)}`}>
             <p
               className={`w-full text-foreground hover:underline underline-offset-4 tracking-widest font-serif ${
-                pathName === "/shop/" + category.category ? "underline" : ""
+                pathName === "/shop/category" ? "underline" : ""
               }`}
             >
               {category.billboard || category.category[0].toUpperCase() + category.category.slice(1)}

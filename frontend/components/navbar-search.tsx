@@ -25,7 +25,7 @@ const NavbarSearch = () => {
     const searchq = current.toString();
     const query = searchq ? `?${searchq}` : "";
 
-    await router.replace(`/shop/${query}`);
+    await router.replace(`/shop${query}`);
   };
 
   const handleKeyDown = (e: any) => {

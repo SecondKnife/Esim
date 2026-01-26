@@ -62,7 +62,7 @@ const PopularByCountry = ({ products }: PopularByCountryProps) => {
               </div>
               {category ? (
                 <Link 
-                  href={`/shop/${category}`}
+                  href={`/shop/category?category=${encodeURIComponent(category)}`}
                   className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 font-semibold text-sm flex items-center gap-1 transition-colors"
                 >
                   Xem tất cả →

@@ -1,7 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import EditForm from "./edit-form";
 import Spinner from "@/components/Spinner";
 import toast from "react-hot-toast";
@@ -24,14 +24,15 @@ export type createData = {
   discount?: number;
 };
 const EditProduct = () => {
-  const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { productId } = params;
+  const productId = searchParams.get("productId");
 
   const { data, isLoading } = useQuery({
     queryKey: ["product"],
     queryFn: async () => {
+      if (!productId) return null as any;
       const { data } = await axios.get(`/api/product/edit/${productId}`);
       return data as createData;
     },

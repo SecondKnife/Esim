@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const NewBillboard = () => {
   const router = useRouter();
-  const params = useParams();
-  const { id } = params;
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   const initialState = {
     billboard: "",
@@ -31,8 +31,9 @@ const NewBillboard = () => {
   const { data } = useQuery({
     queryKey: ["billboard"],
     queryFn: async () => {
+      if (!id) return null;
       const { data } = await axios.get(`/api/billboards/edit/${id}`);
-      if (id) setDataForm(data);
+      setDataForm(data);
       return data;
     },
   });

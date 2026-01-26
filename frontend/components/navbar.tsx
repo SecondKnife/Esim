@@ -10,6 +10,7 @@ import MobileSidebar from "@/app/(admin)/_components/mobile-sidebar";
 import NavItem from "./nav-item";
 import Link from "next/link";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { Suspense } from "react";
 
 // Theme toggle is client-only
 const ThemeToggle = dynamic(() => import('./theme-toggle'), { 
@@ -25,16 +26,22 @@ const NavBar = () => {
     <div className="border-b border-border bg-background shadow-sm sticky top-0 z-50">
       <Container>
         <div className="px-4 sm:px-6 lg:px-8 flex h-20 items-center justify-between">
-          <MobileSidebar>
-            <NavbarSearch />
-            <NavItem />
-          </MobileSidebar>
+          <Suspense fallback={<div className="w-40 h-10 bg-muted rounded" />}>
+            <MobileSidebar>
+              <Suspense fallback={<div className="w-40 h-10 bg-muted rounded" />}>
+                <NavbarSearch />
+              </Suspense>
+              <NavItem />
+            </MobileSidebar>
+          </Suspense>
           <div className="flex items-center max-md:hidden">
             <Logo />
             <NavItem />
           </div>
           <div className="max-md:hidden">
-            <NavbarSearch />
+            <Suspense fallback={<div className="w-64 h-10 bg-muted rounded" />}>
+              <NavbarSearch />
+            </Suspense>
           </div>
           <div className="flex items-center gap-3">
             {/* Dark/Light toggle */}

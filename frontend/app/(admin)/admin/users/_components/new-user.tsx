@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -18,8 +18,8 @@ type initialState = {
 
 const NewUser = () => {
   const router = useRouter();
-  const paramas = useParams();
-  const categoryId = paramas.userId as string;
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("userId") || "";
 
   const checkDisabled = categoryId ? true : false;
   const initialState: initialState = {

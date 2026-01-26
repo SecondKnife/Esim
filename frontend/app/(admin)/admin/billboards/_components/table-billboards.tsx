@@ -230,7 +230,7 @@ const TableBillboards = () => {
                         onClick={() => deleteTask(billboard.id)}
                       />
                     </button>
-                    <Link href={`/admin/billboards/edit/${billboard.id}`}>
+                    <Link href={`/admin/billboards/edit?id=${billboard.id}`}>
                       <EditIcon className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer" />
                     </Link>
                   </div>

@@ -162,7 +162,7 @@ const UserTable = () => {
                       <button onClick={() => deleteUser(user.id)}>
                         <DeleteIcon className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 cursor-pointer" />
                       </button>
-                      <Link href={`/admin/users/edit/${user.id}`}>
+                      <Link href={`/admin/users/edit?userId=${user.id}`}>
                         <EditIcon className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer" />
                       </Link>
                     </div>

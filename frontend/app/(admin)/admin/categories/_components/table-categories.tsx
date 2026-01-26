@@ -138,7 +138,7 @@ const TableCategories = () => {
                         onClick={() => deleteTask(category.id)}
                       />
                     </button>
-                    <Link href={`/admin/categories/edit/${category.id}`}>
+                    <Link href={`/admin/categories/edit?categoryId=${category.id}`}>
                       <EditIcon className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer" />
                     </Link>
                   </div>

@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -20,8 +20,8 @@ type Billboard = {
 
 const NewCategorie = () => {
   const router = useRouter();
-  const paramas = useParams();
-  const categoryId = paramas.categoryId as string;
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoryId") || "";
 
   const initialState: initialState = {
     category: "",
