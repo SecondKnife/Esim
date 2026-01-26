@@ -350,6 +350,7 @@ const CheckoutPendingPage = () => {
                       {/* QR Code với viền nổi bật */}
                       <div className="bg-white p-6 rounded-xl border-4 border-orange-300 dark:border-orange-700 shadow-2xl">
                         <div className="w-64 h-64 flex items-center justify-center bg-white">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={`https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(qrCodeData)}&margin=2`}
                             alt="Mã QR chuyển khoản"

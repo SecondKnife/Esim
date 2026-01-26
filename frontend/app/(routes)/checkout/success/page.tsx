@@ -230,6 +230,7 @@ const CheckoutSuccessPage = () => {
                         {/* QR Code */}
                         <div className="bg-white p-4 rounded-lg border-2 border-border shadow-sm">
                           <div className="w-48 h-48 flex items-center justify-center bg-white">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img 
                               src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeData)}`}
                               alt="Mã QR chuyển khoản"

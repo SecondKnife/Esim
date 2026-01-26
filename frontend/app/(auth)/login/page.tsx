@@ -19,7 +19,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await authAPI.login({ email, password });
+      const res = await authAPI.login(email, password);
       if (res.success) {
         router.push("/");
         router.refresh();

@@ -77,6 +77,7 @@ const BillboardImage = ({ imageURL }: { imageURL: string | null | undefined }) =
   // For base64 images, we need to use regular img tag as Next.js Image doesn't support data URLs well
   if (imgSrc.startsWith("data:image/")) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={imgSrc}
         alt="billboard Image"
@@ -91,6 +92,7 @@ const BillboardImage = ({ imageURL }: { imageURL: string | null | undefined }) =
   // If error occurred, fallback to regular img tag
   if (hasError) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src="/placeholder.png"
         alt="billboard Image"
