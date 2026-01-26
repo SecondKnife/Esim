@@ -49,13 +49,35 @@ router.post("/login", async (req: Request, res: Response) => {
     const token = await createSession(user.id);
     console.log("✅ Session created:", token.substring(0, 20) + "...");
 
-    // Set cookie
-    res.cookie("session", token, {
+    // Set cookie with proper configuration for cross-domain (tunnel) support
+    // Best practices for secure authentication cookies:
+    // 1. httpOnly: true - prevents JavaScript access (XSS protection)
+    // 2. secure: true - only sent over HTTPS (required for sameSite: "none")
+    // 3. sameSite: "none" - allows cross-domain cookies (for tunnel/Cloudflare)
+    // 4. maxAge: 7 days - auto-expires after 7 days
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const isFrontendHttps = frontendUrl.startsWith("https://");
+    const isTunnel = frontendUrl.includes("trycloudflare.com") || 
+                     frontendUrl.includes("ngrok") || 
+                     frontendUrl.includes("tunnel") ||
+                     frontendUrl.includes(".pages.dev");
+    
+    // For tunnel/cross-domain: must use secure: true and sameSite: "none"
+    // For localhost HTTP: use sameSite: "lax"
+    const cookieConfig = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isFrontendHttps || isTunnel || process.env.NODE_ENV === "production",
+      sameSite: (isFrontendHttps || isTunnel) ? ("none" as const) : ("lax" as const),
       maxAge: 60 * 60 * 24 * 7 * 1000, // 7 days in milliseconds
       path: "/",
+    };
+    
+    res.cookie("session", token, cookieConfig);
+    
+    console.log("🍪 Cookie set:", {
+      ...cookieConfig,
+      frontendUrl,
+      isTunnel,
     });
 
     console.log("✅ Login successful for:", user.email);
@@ -113,11 +135,18 @@ router.post("/signup", async (req: Request, res: Response) => {
 
     const token = await createSession(user.id);
 
-    // Set cookie
+    // Set cookie (same config as login)
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const isFrontendHttps = frontendUrl.startsWith("https://");
+    const isTunnel = frontendUrl.includes("trycloudflare.com") || 
+                     frontendUrl.includes("ngrok") || 
+                     frontendUrl.includes("tunnel") ||
+                     frontendUrl.includes(".pages.dev");
+    
     res.cookie("session", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isFrontendHttps || isTunnel || process.env.NODE_ENV === "production",
+      sameSite: (isFrontendHttps || isTunnel) ? ("none" as const) : ("lax" as const),
       maxAge: 60 * 60 * 24 * 7 * 1000, // 7 days
       path: "/",
     });
@@ -146,11 +175,18 @@ router.post("/logout", async (req: Request, res: Response) => {
       await deleteSession(token);
     }
 
-    // Clear cookie
+    // Clear cookie (same config as set cookie)
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const isFrontendHttps = frontendUrl.startsWith("https://");
+    const isTunnel = frontendUrl.includes("trycloudflare.com") || 
+                     frontendUrl.includes("ngrok") || 
+                     frontendUrl.includes("tunnel") ||
+                     frontendUrl.includes(".pages.dev");
+    
     res.cookie("session", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isFrontendHttps || isTunnel || process.env.NODE_ENV === "production",
+      sameSite: (isFrontendHttps || isTunnel) ? ("none" as const) : ("lax" as const),
       maxAge: 0,
       path: "/",
     });
@@ -164,17 +200,39 @@ router.post("/logout", async (req: Request, res: Response) => {
 // Get current user endpoint
 router.get("/me", async (req: Request, res: Response) => {
   try {
+    console.log("🔍 /me endpoint called");
+    console.log("📦 Cookies received:", req.cookies);
+    console.log("📋 Headers:", {
+      cookie: req.headers.cookie,
+      authorization: req.headers.authorization,
+      origin: req.headers.origin,
+    });
+    
     const token = req.cookies?.session || req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
+      console.log("❌ No token found in cookies or headers");
       return res.json({ user: null });
     }
 
+    console.log("✅ Token found:", token.substring(0, 20) + "...");
+    
     const session = await getSession(token);
 
     if (!session) {
+      console.log("❌ Session not found or expired");
       return res.json({ user: null });
     }
+
+    console.log("✅ Session found for user:", session.user.email);
+    console.log("📅 Session expires at:", session.expiresAt);
+
+    // Calculate remaining time until expiry
+    const now = new Date();
+    const expiresAt = new Date(session.expiresAt);
+    const remainingMs = expiresAt.getTime() - now.getTime();
+    const remainingDays = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+    const remainingHours = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     return res.json({
       user: {
@@ -183,8 +241,12 @@ router.get("/me", async (req: Request, res: Response) => {
         email: session.user.email,
         role: session.user.role,
       },
+      expiresAt: session.expiresAt.toISOString(),
+      remainingDays: remainingDays > 0 ? remainingDays : 0,
+      remainingHours: remainingHours > 0 ? remainingHours : 0,
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("❌ /me error:", error);
     return res.json({ user: null });
   }
 });
