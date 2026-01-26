@@ -37,6 +37,13 @@ const nextConfig = {
   trailingSlash: true,
   // Disable server-side features for static export
   reactStrictMode: true,
+  // Optimize build performance
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
 };
 
 module.exports = nextConfig;
