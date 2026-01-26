@@ -57,7 +57,7 @@ const getImageUrl = (imageURL: string | null | undefined): string => {
 /**
  * Billboard Image Component
  * Handles different image formats: base64, full URL, or relative path
- * Uses regular img tag for better error handling and base64 support
+ * Uses Next.js Image component for better performance and optimization
  */
 const BillboardImage = ({ imageURL }: { imageURL: string | null | undefined }) => {
   const [imgSrc, setImgSrc] = React.useState<string>(() => {
@@ -74,13 +74,40 @@ const BillboardImage = ({ imageURL }: { imageURL: string | null | undefined }) =
     }
   };
 
+  // For base64 images, we need to use regular img tag as Next.js Image doesn't support data URLs well
+  if (imgSrc.startsWith("data:image/")) {
+    return (
+      <img
+        src={imgSrc}
+        alt="billboard Image"
+        className="border rounded-sm object-cover w-full h-full"
+        onError={handleError}
+        loading="lazy"
+      />
+    );
+  }
+
+  // Use Next.js Image component for regular URLs
+  // If error occurred, fallback to regular img tag
+  if (hasError) {
+    return (
+      <img
+        src="/placeholder.png"
+        alt="billboard Image"
+        className="border rounded-sm object-cover w-full h-full"
+        loading="lazy"
+      />
+    );
+  }
+
   return (
-    <img
+    <Image
       src={imgSrc}
       alt="billboard Image"
+      width={60}
+      height={60}
       className="border rounded-sm object-cover w-full h-full"
-      onError={handleError}
-      loading="lazy"
+      unoptimized
     />
   );
 };
