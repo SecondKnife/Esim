@@ -47,6 +47,20 @@ export default function RootLayout({
                       document.documentElement.classList.remove('dark');
                     }
                   } catch (e) {}
+                  
+                  // Suppress RSC (React Server Components) requests for static export
+                  // These requests cause 404 errors in static export mode
+                  if (typeof window !== 'undefined' && window.fetch) {
+                    const originalFetch = window.fetch;
+                    window.fetch = function(...args) {
+                      const url = args[0]?.toString() || '';
+                      // Block RSC requests (index.txt?_rsc=)
+                      if (url.includes('index.txt?_rsc=') || url.includes('/_rsc=')) {
+                        return Promise.resolve(new Response(null, { status: 404 }));
+                      }
+                      return originalFetch.apply(this, args);
+                    };
+                  }
                 })();
               `,
             }}

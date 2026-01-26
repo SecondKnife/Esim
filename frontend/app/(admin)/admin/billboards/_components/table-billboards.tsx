@@ -19,7 +19,7 @@ import ReactPaginate from "react-paginate";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { R2_BASE_URL } from "@/lib/r2-urls";
+import { normalizeImageUrl } from "@/lib/r2-urls";
 
 type Billboards = {
   id: string;
@@ -30,28 +30,11 @@ type Billboards = {
 
 /**
  * Get the correct image URL from various formats
- * - If base64 (data:image/...), return as-is
- * - If full URL (http:// or https://), return as-is
- * - If relative path, prepend R2_BASE_URL
+ * - Uses normalizeImageUrl to convert S3 URLs to R2 URLs
+ * - Handles base64, full URLs, and relative paths
  */
 const getImageUrl = (imageURL: string | null | undefined): string => {
-  if (!imageURL) {
-    return "/placeholder.png";
-  }
-
-  // Base64 image (from old upload method)
-  if (imageURL.startsWith("data:image/")) {
-    return imageURL;
-  }
-
-  // Already a full URL (from R2 or external source)
-  if (imageURL.startsWith("http://") || imageURL.startsWith("https://")) {
-    return imageURL;
-  }
-
-  // Relative path - prepend R2 base URL
-  const cleanPath = imageURL.startsWith("/") ? imageURL.slice(1) : imageURL;
-  return `${R2_BASE_URL}/${cleanPath}`;
+  return normalizeImageUrl(imageURL);
 };
 
 /**

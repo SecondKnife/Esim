@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Product } from "@/types";
 import { parseImageURLs, formatVND } from "@/lib/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { R2_BASE_URL } from "@/lib/r2-urls";
+import { normalizeImageUrl } from "@/lib/r2-urls";
 
 interface ProductCard {
   data: Product;
@@ -17,21 +17,8 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
   const images = parseImageURLs(data.imageURLs);
   const [imageSrc, setImageSrc] = useState(() => {
     if (!images || images.length === 0) return "/placeholder.png";
-    const firstImage = images[0];
-    
-    // If already a full URL, use it
-    if (firstImage.startsWith("http://") || firstImage.startsWith("https://")) {
-      return firstImage;
-    }
-    
-    // If base64, use it
-    if (firstImage.startsWith("data:image/")) {
-      return firstImage;
-    }
-    
-    // If relative path, prepend R2 base URL
-    const cleanPath = firstImage.startsWith("/") ? firstImage.slice(1) : firstImage;
-    return `${R2_BASE_URL}/${cleanPath}`;
+    // Normalize image URL - convert S3 URLs to R2 URLs
+    return normalizeImageUrl(images[0]);
   });
   const [imageError, setImageError] = useState(false);
 
