@@ -15,29 +15,11 @@ const ProductPage = () => {
 export default ProductPage;
 
 // Required for output: 'export' with dynamic routes
-// This function runs at BUILD time to generate all product pages
+// For static export, we return empty array and let client-side handle routing
 export async function generateStaticParams() {
-  try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const response = await fetch(`${API_URL}/api/product`, {
-      cache: 'no-store'
-    });
-    
-    if (!response.ok) {
-      console.warn('Failed to fetch products for generateStaticParams');
-      return [];
-    }
-    
-    const products = await response.json();
-    console.log(`Generating ${products.length} product pages...`);
-    
-    return products.map((product: any) => ({
-      productId: product.id,
-    }));
-  } catch (error) {
-    console.error('Error in generateStaticParams:', error);
-    return [];
-  }
+  // In static export mode, we can't fetch from API at build time
+  // Return empty array and let client-side routing handle it
+  return [];
 }
 
 // Allow params not in generateStaticParams (for dev mode)
