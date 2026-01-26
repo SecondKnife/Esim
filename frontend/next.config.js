@@ -44,6 +44,16 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     } : false,
   },
+  // Disable RSC (React Server Components) for static export
+  // This prevents Next.js from trying to fetch RSC payloads (index.txt?_rsc=)
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
+  // Suppress RSC requests in static export
+  // This tells Next.js to not attempt RSC fetches
+  generateBuildId: async () => {
+    return 'static-build';
+  },
 };
 
 module.exports = nextConfig;
