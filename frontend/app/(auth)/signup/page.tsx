@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authAPI } from "@/lib/api-client";
@@ -13,6 +14,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,11 @@ export default function SignupPage() {
     try {
       const res = await authAPI.signup(name, email, password) as { success: boolean; user?: { id: string; name: string; email: string; role: string } };
       if (res.success) {
+        // Invalidate và refetch currentUser query để update UI
+        await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        await queryClient.refetchQueries({ queryKey: ["currentUser"] });
+        
+        // Navigate to home page
         router.push("/");
         router.refresh();
       }
