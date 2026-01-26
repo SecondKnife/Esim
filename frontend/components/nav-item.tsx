@@ -16,15 +16,15 @@ const NavItem = () => {
     },
     {
       label: "Shop",
-      href: "/shop",
+      href: "/shop/",
     },
     {
       label: "Featured",
-      href: "/featured",
+      href: "/featured/",
     },
     {
       label: "Admin",
-      href: "/admin",
+      href: "/admin/",
     },
   ];
 
@@ -39,7 +39,9 @@ const NavItem = () => {
             <p
               className={`max-md:text-yellow-50 font-serif text-gray-600 text-l max-md:text-xl hover:text-gray-300  ${
                 (pathname === route.href ||
-                  pathname.startsWith(`${route.href}/`)) &&
+                  pathname === route.href.replace(/\/$/, "") ||
+                  pathname.replace(/\/$/, "") === route.href.replace(/\/$/, "") ||
+                  pathname.startsWith(`${route.href}`)) &&
                 "font-semibold max-md:underline"
               }`}
             >
