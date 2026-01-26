@@ -13,10 +13,44 @@ import { db } from "./lib/db";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware - CORS configuration
+// Allow requests from frontend URL and Cloudflare Pages domains
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:3000",
+  // Cloudflare Pages domains (wildcard for all Pages deployments)
+  /^https:\/\/.*\.pages\.dev$/,
+  /^https:\/\/.*\.workers\.dev$/,
+  // Add your custom domain if you have one
+  // "https://yourdomain.com",
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return origin === allowedOrigin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS: Blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 app.use(cookieParser());
 app.use(express.json());

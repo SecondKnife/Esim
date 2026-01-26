@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Billboard } from "@/types";
 import LoadingSkeleton from "../loading-skeleton";
 import { Button } from "../ui/button";
+import { normalizeImageUrl } from "@/lib/r2-urls";
 
 type CardProps = {
   billboard?: Billboard;
@@ -16,7 +17,8 @@ const CardItem = ({ billboard, category }: CardProps) => {
     return <LoadingSkeleton />;
   }
 
-  const imageUrl = billboard.imageURL || ""
+  // Normalize image URL - convert S3 URLs to R2 URLs
+  const imageUrl = normalizeImageUrl(billboard.imageURL);
 
   return (
     <Card className="border-border bg-card">

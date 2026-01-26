@@ -72,3 +72,36 @@ export const stringifyImageUrls = (urls: string[]): string => {
   return JSON.stringify(urls);
 };
 
+/**
+ * Normalize image URL - convert S3 URLs to R2 URLs or handle relative paths
+ * @param imageUrl Image URL from database (could be S3 URL, R2 URL, or relative path)
+ * @returns Normalized R2 URL
+ */
+export const normalizeImageUrl = (imageUrl: string | null | undefined): string => {
+  if (!imageUrl) {
+    return R2_IMAGES.PLACEHOLDER;
+  }
+
+  // Base64 image (from old upload method)
+  if (imageUrl.startsWith("data:image/")) {
+    return imageUrl;
+  }
+
+  // Already a full URL
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    // If it's an S3 URL, try to convert to R2 URL
+    if (imageUrl.includes("kemal-web-storage.s3.eu-north-1.amazonaws.com")) {
+      // Extract path from S3 URL and convert to R2 URL
+      const url = new URL(imageUrl);
+      const path = url.pathname.startsWith("/") ? url.pathname.slice(1) : url.pathname;
+      return `${R2_BASE_URL}/${path}`;
+    }
+    // If it's already an R2 URL or other external URL, return as-is
+    return imageUrl;
+  }
+
+  // Relative path - prepend R2 base URL
+  const cleanPath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
+  return `${R2_BASE_URL}/${cleanPath}`;
+};
+

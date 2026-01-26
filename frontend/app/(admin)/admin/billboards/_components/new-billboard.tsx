@@ -26,8 +26,6 @@ const NewBillboard = () => {
     image: "",
   });
 
-  const baseUrl = "https://kemal-web-storage.s3.eu-north-1.amazonaws.com";
-
   const { data } = useQuery({
     queryKey: ["billboard"],
     queryFn: async () => {
@@ -39,7 +37,11 @@ const NewBillboard = () => {
   });
 
   useEffect(() => {
-    if (id) setImagePreview(`${baseUrl}/${data?.imageURL}`);
+    if (id && data?.imageURL) {
+      // Normalize image URL - convert S3 URLs to R2 URLs if needed
+      const { normalizeImageUrl } = require("@/lib/r2-urls");
+      setImagePreview(normalizeImageUrl(data.imageURL));
+    }
   }, [id, data?.imageURL]);
 
   const handleFileChange = (e: any) => {
