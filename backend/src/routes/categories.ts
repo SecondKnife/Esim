@@ -21,13 +21,13 @@ router.get("/", async (req: any, res: Response) => {
     });
 
     console.log(`✅ Found ${categories.length} categories`);
-    return res.json(categories);
+    return res.json(categories || []);
   } catch (error: any) {
     console.error("❌ Error getting categories:", error);
     return res.status(500).json({
       error: "Error getting categories",
       message: error.message || "Unknown error",
-      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      details: error.message
     });
   }
 });

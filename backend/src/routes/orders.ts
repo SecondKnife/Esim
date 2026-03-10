@@ -15,15 +15,20 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
-    return res.json(orders);
-  } catch (error) {
-    return res.status(500).json({ error: "Error getting orders." });
+    return res.json(orders || []);
+  } catch (error: any) {
+    return res.status(500).json({
+      error: "Error getting orders.",
+      details: error.message
+    });
   }
 });
 
-// Get order by ID
-router.get("/:orderId", requireAuth, async (req: AuthRequest, res: Response) => {
+router.get("/:orderId", async (req: AuthRequest, res: Response) => {
   const { orderId } = req.params;
 
   try {
