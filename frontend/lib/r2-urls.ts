@@ -38,7 +38,7 @@ export const R2_IMAGES = {
   // Banners
   BANNER_MAIN: getR2Url("banners/BannerMain.jpg"),
   BANNER_HERO: getR2Url("banners/hero.jpg"),
-  
+
   // Categories / Countries
   THAILAND: getR2Url("categories/thailand.png"),
   SINGAPORE: getR2Url("categories/singapore.png"),
@@ -48,7 +48,7 @@ export const R2_IMAGES = {
   EUROPE: getR2Url("categories/europe.png"),
   AUSTRALIA: getR2Url("categories/australia.png"),
   ASIA: getR2Url("categories/asia.png"),
-  
+
   // Placeholder
   PLACEHOLDER: getR2Url("placeholder.png"),
 } as const;
@@ -109,7 +109,7 @@ export const normalizeImageUrl = (imageUrl: string | null | undefined): string =
     if (imageUrl.includes("/uploads/") || imageUrl.includes(VPS_BASE_URL)) {
       return imageUrl;
     }
-    
+
     // If it's an S3 URL, try to extract path and convert to VPS URL
     if (imageUrl.includes("kemal-web-storage.s3.eu-north-1.amazonaws.com")) {
       try {
@@ -123,19 +123,19 @@ export const normalizeImageUrl = (imageUrl: string | null | undefined): string =
         return imageUrl;
       }
     }
-    
+
     // If it's an R2 URL, try to extract path and convert to VPS URL
     if (imageUrl.includes(".r2.dev") || imageUrl.includes("r2.cloudflarestorage.com")) {
       try {
         const url = new URL(imageUrl);
         let path = url.pathname.startsWith("/") ? url.pathname.slice(1) : url.pathname;
-        
+
         // If path doesn't contain a folder (e.g., just "australia.png"),
         // try common folders: categories, products, billboards
         if (!path.includes("/")) {
           // Common country/category image names
-          const countryImages = ["australia.png", "korea.png", "thailand.png", "singapore.png", 
-                                 "usa.png", "japan.png", "europe.png", "asia.png"];
+          const countryImages = ["australia.png", "korea.png", "thailand.png", "singapore.png",
+            "usa.png", "japan.png", "europe.png", "asia.png"];
           if (countryImages.includes(path.toLowerCase())) {
             path = `categories/${path}`;
           } else {
@@ -143,7 +143,7 @@ export const normalizeImageUrl = (imageUrl: string | null | undefined): string =
             path = `products/${path}`;
           }
         }
-        
+
         // Convert R2 path to VPS uploads path
         // R2: categories/australia.png -> VPS: uploads/categories/australia.png
         return `${VPS_BASE_URL}/uploads/${path}`;
@@ -152,7 +152,7 @@ export const normalizeImageUrl = (imageUrl: string | null | undefined): string =
         return imageUrl;
       }
     }
-    
+
     // If it's already a valid external URL (not S3/R2), return as-is
     return imageUrl;
   }
@@ -163,7 +163,7 @@ export const normalizeImageUrl = (imageUrl: string | null | undefined): string =
   // - "categories/australia.png" -> "https://api.com/uploads/categories/australia.png"
   // - "/categories/australia.png" -> "https://api.com/uploads/categories/australia.png"
   const cleanPath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
-  
+
   // If path doesn't start with a folder name, assume it's in root uploads
   // Otherwise, use as-is
   return `${VPS_BASE_URL}/uploads/${cleanPath}`;

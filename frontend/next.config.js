@@ -20,12 +20,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
-      // Thêm custom domain của bạn nếu có
-      // {
-      //   protocol: "https",
-      //   hostname: "cdn.yourdomain.com",
-      // },
-      // Giữ lại S3 cho compatibility
+      {
+        protocol: "https",
+        hostname: "sim4travel.vn",
+      },
       {
         protocol: "https",
         hostname: "kemal-web-storage.s3.eu-north-1.amazonaws.com",

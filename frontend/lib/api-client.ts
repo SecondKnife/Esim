@@ -3,7 +3,7 @@
 // Auto-convert HTTP to HTTPS if site is running on HTTPS (fix Mixed Content)
 const getApiBaseUrl = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-  
+
   // If site is on HTTPS and API URL is HTTP, try to convert to HTTPS
   if (typeof window !== "undefined" && window.location.protocol === "https:") {
     if (apiUrl.startsWith("http://")) {
@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
       return apiUrl.replace("http://", "https://");
     }
   }
-  
+
   return apiUrl;
 };
 
@@ -23,7 +23,7 @@ async function apiRequest<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const config: RequestInit = {
     ...options,
     headers: {

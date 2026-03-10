@@ -21,7 +21,8 @@ const allowedOrigins = [
   /^https:\/\/.*\.pages\.dev$/,
   /^https:\/\/.*\.workers\.dev$/,
   // Add your custom domain if you have one
-  // "https://yourdomain.com",
+  "https://sim4travel.vn",
+  "https://www.sim4travel.vn",
 ];
 
 app.use(cors({
@@ -30,7 +31,7 @@ app.use(cors({
     if (!origin) {
       return callback(null, true);
     }
-    
+
     // Check if origin is in allowed list
     const isAllowed = allowedOrigins.some(allowedOrigin => {
       if (typeof allowedOrigin === 'string') {
@@ -40,7 +41,7 @@ app.use(cors({
       }
       return false;
     });
-    
+
     if (isAllowed) {
       callback(null, true);
     } else {
@@ -108,7 +109,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 app.listen(PORT, () => {
   console.log(`🚀 Backend server running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || "development"}`);
-  
+
   // Test database connection
   db.$connect()
     .then(() => console.log("✅ Database connected successfully"))
