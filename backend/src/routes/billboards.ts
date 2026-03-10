@@ -45,7 +45,7 @@ router.post("/", requireAuth, async (req: AuthRequest, res: Response) => {
 // Edit billboard
 router.put("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  
+
   try {
     const { billboard, imageURL } = req.body;
 
@@ -63,6 +63,21 @@ router.put("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => 
     });
   } catch (error) {
     return res.status(500).json({ error: "Error updating billboard" });
+  }
+});
+
+// Delete billboard
+router.delete("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await db.billboard.delete({
+      where: { id },
+    });
+
+    return res.json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ error: "Error deleting billboard" });
   }
 });
 

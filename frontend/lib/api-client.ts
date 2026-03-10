@@ -1,3 +1,4 @@
+import axios from "axios";
 // API client for frontend to communicate with backend server
 
 // Auto-convert HTTP to HTTPS if site is running on HTTPS (fix Mixed Content)
@@ -15,7 +16,11 @@ const getApiBaseUrl = () => {
   return apiUrl;
 };
 
-const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = getApiBaseUrl();
+
+// Configure axios defaults
+axios.defaults.baseURL = API_BASE_URL;
+axios.defaults.withCredentials = true;
 
 // Helper function to make API requests
 async function apiRequest<T>(

@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", async (req: any, res: Response) => {
   try {
     console.log("📂 Fetching all categories...");
-    
+
     if (!db) {
       console.error("❌ Database client not initialized");
       return res.status(500).json({ error: "Database connection failed" });
@@ -19,7 +19,7 @@ router.get("/", async (req: any, res: Response) => {
         createdAt: "desc",
       },
     });
-    
+
     console.log(`✅ Found ${categories.length} categories`);
     return res.json(categories);
   } catch (error: any) {
@@ -62,7 +62,7 @@ router.post("/", requireAuth, async (req: AuthRequest, res: Response) => {
 // Edit category
 router.put("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  
+
   try {
     const { category, billboard, billboardId } = req.body;
 
@@ -81,6 +81,21 @@ router.put("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => 
     });
   } catch (error) {
     return res.status(500).json({ error: "Error updating category" });
+  }
+});
+
+// Delete category
+router.delete("/edit/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await db.category.delete({
+      where: { id },
+    });
+
+    return res.json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ error: "Error deleting category" });
   }
 });
 

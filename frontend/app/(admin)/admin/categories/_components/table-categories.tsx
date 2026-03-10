@@ -17,6 +17,7 @@ import formatDate, { sortByDate } from "@/app/utils/formateDate";
 import ReactPaginate from "react-paginate";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "@/lib/api-client";
 
 type Category = {
   id: string;
@@ -34,7 +35,7 @@ const TableCategories = () => {
   const { error, data, isLoading } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/categories");
+      const { data } = await axios.get(`${API_BASE_URL}/api/categories`);
       const sortedData = sortByDate(data);
       return sortedData as Category[];
     },
@@ -42,7 +43,7 @@ const TableCategories = () => {
 
   const deleteTask = async (id: string) => {
     try {
-      const res = await axios.delete(`/api/categories/edit/${id}`);
+      const res = await axios.delete(`${API_BASE_URL}/api/categories/edit/${id}`);
       queryClient.invalidateQueries({ queryKey: ["category"] });
       toast.success("Category deleted");
     } catch (error) {
@@ -73,7 +74,7 @@ const TableCategories = () => {
         description="Manage categories for your store"
         url="/admin/categories/new"
       />
-      <TableContainer 
+      <TableContainer
         component={Paper}
         className="bg-white dark:bg-gray-800"
         sx={{
@@ -111,7 +112,7 @@ const TableCategories = () => {
             {currentProducts?.map((category) => (
               <TableRow
                 key={category.id}
-                sx={{ 
+                sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                   "&:hover": {
                     backgroundColor: 'rgba(0, 0, 0, 0.02)',

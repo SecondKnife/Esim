@@ -16,6 +16,7 @@ import TitleHeader from "@/app/(admin)/_components/title-header";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "@/lib/api-client";
 
 type OrderItem = {
   id: string;
@@ -51,7 +52,7 @@ const TableOrders = () => {
   const { error, data, isLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/orders");
+      const { data } = await axios.get(`${API_BASE_URL}/api/orders`);
       const sortedData = sortByDate(data);
       return sortedData as Order[];
     },
@@ -67,7 +68,7 @@ const TableOrders = () => {
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     setUpdatingOrder(orderId);
     try {
-      await axios.patch(`/api/orders/${orderId}`, { status: newStatus });
+      await axios.patch(`${API_BASE_URL}/api/orders/${orderId}`, { status: newStatus });
       toast.success("Cập nhật trạng thái đơn hàng thành công");
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     } catch (error: any) {
@@ -127,7 +128,7 @@ const TableOrders = () => {
         count={data?.length}
         description="Manage orders for your store"
       />
-      <TableContainer 
+      <TableContainer
         component={Paper}
         className="bg-white dark:bg-gray-800"
         sx={{
@@ -174,7 +175,7 @@ const TableOrders = () => {
             {currentProducts?.map((order) => (
               <TableRow
                 key={order.id}
-                sx={{ 
+                sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                   "&:hover": {
                     backgroundColor: 'rgba(0, 0, 0, 0.02)',
@@ -184,8 +185,8 @@ const TableOrders = () => {
                   },
                 }}
               >
-                <TableCell 
-                  component="th" 
+                <TableCell
+                  component="th"
                   scope="row"
                   sx={{ color: 'inherit !important' }}
                 >
